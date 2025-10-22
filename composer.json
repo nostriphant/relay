@@ -1,7 +1,6 @@
 {
     "name": "nostriphant/relay",
     "description": "Nostr Relay in PHP",
-    "type": "project",
     "require": {
         "php": "^8.4",
         "ext-pcntl": "*",
