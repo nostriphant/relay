@@ -1,0 +1,64 @@
+{
+    "name": "nostriphant/relay",
+    "description": "Nostr Relay in PHP",
+    "type": "project",
+    "require": {
+        "php": "^8.4",
+        "ext-pcntl": "*",
+        "ext-sqlite3" : "*",
+        "psr/log": "^3.0",
+        "amphp/http-server": "^3.3",
+        "amphp/byte-stream": "^2.1",
+        "amphp/log": "^2.0",
+        "amphp/websocket-server": "^4.0",
+        "amphp/http-server-router": "^2.0",
+        "amphp/http-server-static-content": "^2.0",
+        "nostriphant/client": "^0.3",
+        "nostriphant/nip-01": "^2.0",
+        "nostriphant/nip-19": "^2.0",
+        "nostriphant/nip-44": "^2.0",
+        "nostriphant/nip-59": "^2.0",
+        "nostriphant/nip-17": "^2.0",
+        "nostriphant/stores": "^2.0",
+        "nostriphant/functional": "^2.2"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "nostriphant\\Relay\\": "src/",
+            "nostriphant\\RelayTests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rik Meijer",
+            "email": "rik@nostriphant.dev"
+        }
+    ],
+    "require-dev": {
+        "ext-curl": "*",
+        "pestphp/pest": "^4.0",
+        "mockery/mockery": "^1.6"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "clearCache": [
+            "rm -rf ./data/events/*",
+            "rm -rf ./data/files/*",
+            "rm -rf ./data/relay_*"
+        ],
+        "test": [
+            "@clearCache @no_additional_args",
+            "./vendor/bin/pest"
+        ],
+        "next": [
+            "git tag -f `cat VERSION` @no_additional_args",
+            "echo @additional_args > VERSION",
+            "git commit -am 'start VERSION @additional_args'"
+        ]
+    }
+}
