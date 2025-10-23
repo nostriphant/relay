@@ -18,7 +18,6 @@ it('can instanatiate Relay', function () {
     $logger->shouldReceive('notice', 'debug', 'info', 'warning');
     
     $socket_file = sys_get_temp_dir() . '/relay.socket';
-    unlink($socket_file);
     
     expect($socket_file)->not()->toBeFile();
     $stop = $relay($socket_file, 1000, $logger);
@@ -26,6 +25,8 @@ it('can instanatiate Relay', function () {
     expect($socket_file)->toBeFile();
     
     $stop();
+    
+    unlink($socket_file);
 });
 
 
@@ -72,6 +73,8 @@ it('can boot a relay instance', function() {
         $stop();
     });'];
     $process = proc_open($cmd, $descriptorspec, $pipes, $cwd, []);
+    
+    expect($process)->toBeResource();
     
     fclose($pipes[0]);
     
