@@ -32,16 +32,14 @@ it('can instanatiate Relay', function () {
 
 it('can boot a relay instance', function() {
     
-    $socket_file = sys_get_temp_dir() . '/relay.socket';
+    $socket = sys_get_temp_dir() . '/relay.socket';
     
     expect($socket)->not()->toBeFile();
     
     $log_file = ROOT_DIR . "/logs/relay.log";
     
-    $runtest = fn(string $line) => var_dump($line, 'Listening on http://' . $socket);
     $cwd = ROOT_DIR;
     $process_id = 'relay-' . substr(sha1($socket), 0, 6);
-    $output_file = $cwd . "/logs/{$process_id}-output.log";
     $error_file = $cwd . "/logs/{$process_id}-errors.log";
     $descriptorspec = [
         0 => ["pipe", "r"],  
