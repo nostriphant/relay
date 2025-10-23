@@ -15,8 +15,6 @@ use Amp\Websocket\Server\Websocket;
 use Amp\Websocket\Server\Rfc6455Acceptor;
 use Amp\Http\Server\RequestHandler\ClosureRequestHandler;
 
-use nostriphant\Functional\Await;
-
 readonly class WebsocketServer {
     
     private \Amp\Websocket\Server\WebsocketClientHandler $clientHandler;
@@ -25,11 +23,11 @@ readonly class WebsocketServer {
         $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, new WebsocketClientGateway());   
     }
 
-    public function __invoke(string $ip, string $port, int $max_connections_per_ip, LoggerInterface $log, callable $shutdown_callback): void {
+    public function __invoke(string $socket, int $max_connections_per_ip, LoggerInterface $log): callable {
         $errorHandler = new DefaultErrorHandler();
         
         $server = SocketHttpServer::createForDirectAccess($log, connectionLimitPerIp: $max_connections_per_ip);
-        $server->expose(new Socket\InternetAddress($ip, $port));
+        $server->expose($socket);
 
         $router = new Router($server, $log, $errorHandler);
         $acceptor = new Rfc6455Acceptor();
@@ -42,10 +40,7 @@ readonly class WebsocketServer {
         
         $server->start($router, $errorHandler);
 
-        (new Await(fn() => \Amp\trapSignal([SIGINT, SIGTERM])))(function(int $signal) use ($shutdown_callback, $server) {
-            $shutdown_callback($signal);
-            $server->stop();
-        });
+        return fn() => $server->stop();
     }
 
 }

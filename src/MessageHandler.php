@@ -5,7 +5,7 @@ namespace nostriphant\Relay;
 use nostriphant\NIP01\Message;
 use nostriphant\NIP01\Transmission;
 
-readonly class MessageHandler implements \nostriphant\Amp\MessageHandler {
+readonly class MessageHandler implements \nostriphant\Relay\Amp\MessageHandler {
     
     private Subscriptions $subscriptions;
     

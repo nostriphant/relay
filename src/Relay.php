@@ -18,7 +18,7 @@ class Relay {
         });
     }
     
-    public function __invoke(string $ip, string $port, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log): void {
-        ($this->server)($ip, $port, $max_connections_per_ip, $log, fn(int $signal) => $log->info(sprintf("Received signal %d, stopping Relay server", $signal)));
+    public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log): callable {
+        return ($this->server)($socket, $max_connections_per_ip, $log);
     }
 }
