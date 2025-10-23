@@ -15,7 +15,7 @@ it('stores file, when event is in store', function () {
     $relay = new \nostriphant\Relay\Relay($store, FILES_DIR);
 
     $logger = Mockery::mock(Psr\Log\LoggerInterface::class);
-    $logger->shouldReceive('notice', 'debug', 'info');
+    $logger->shouldReceive('notice', 'debug', 'info', 'warning');
     
     $socket_file = sys_get_temp_dir() . '/relay.socket';
     unlink($socket_file);
