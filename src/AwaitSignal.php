@@ -2,8 +2,10 @@
 
 namespace nostriphant\Relay;
 
+use \nostriphant\Functional\Await;
+
 readonly class AwaitSignal {
-    private \nostriphant\Functional\Await $await;
+    private Await $await;
     
     public function __construct(callable $callback) {
        (new Await(fn() => \Amp\trapSignal([SIGINT, SIGTERM])))($callback);
