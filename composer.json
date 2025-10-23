@@ -4,7 +4,6 @@
     "require": {
         "php": "^8.4",
         "ext-pcntl": "*",
-        "ext-sqlite3" : "*",
         "psr/log": "^3.0",
         "amphp/http-server": "^3.3",
         "amphp/byte-stream": "^2.1",
@@ -21,6 +20,7 @@
         "nostriphant/stores": "^2.0",
         "nostriphant/functional": "^2.2"
     },
+    
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -37,7 +37,8 @@
     "require-dev": {
         "ext-curl": "*",
         "pestphp/pest": "^4.0",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "monolog/monolog": "^3.7"
     },
     "config": {
         "allow-plugins": {

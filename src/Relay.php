@@ -4,7 +4,9 @@ namespace nostriphant\Relay;
 
 use nostriphant\Stores\Store;
 
-class Relay {
+readonly class Relay {
+    private Amp\WebsocketServer $server;
+    
     public function __construct(Store $events, string $files_path) {
         $files = new Files($files_path, $events);
         $messageHandlerFactory =  new MessageHandlerFactory($events, $files);
