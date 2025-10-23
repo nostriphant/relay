@@ -32,7 +32,7 @@ it('can instanatiate Relay', function () {
 
 it('can boot a relay instance', function() {
     
-    $socket = ROOT_DIR . "/relay.socket";
+    $socket_file = sys_get_temp_dir() . '/relay.socket';
     
     expect($socket)->not()->toBeFile();
     
