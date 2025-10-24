@@ -72,6 +72,8 @@ it('can boot a relay instance', function() {
     });'];
     $process = proc_open($cmd, $descriptorspec, $pipes, $cwd, []);
     
+    var_Dump(file_get_contents($error_file));
+    exit;
     expect($process)->toBeResource(file_get_contents($error_file));
     
     fclose($pipes[0]);
