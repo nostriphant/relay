@@ -7,10 +7,12 @@ use Amp\Websocket\Server\Websocket;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler as IRequestHandler;
 use Amp\Http\Server\Response;
-use \nostriphant\Relay\InformationDocument;
 
-class RequestHandler implements IRequestHandler {
-    public function __construct(private Websocket $websocket) {
+readonly class RequestHandler implements IRequestHandler {
+    private \JsonSerializable $information_document;
+    
+    public function __construct(private Websocket $websocket, \JsonSerializable $information_document) {
+        $this->information_document = $information_document;
     }
     public function __call(string $name, array $arguments): mixed {
         return $this->websocket->$name(...$arguments);
@@ -22,15 +24,7 @@ class RequestHandler implements IRequestHandler {
         if ($response->getStatus() === HttpStatus::UPGRADE_REQUIRED) {
             return new Response(
                 headers: ['Content-Type' => 'application/json'],
-                body: json_encode(new InformationDocument(
-                                    $_SERVER['RELAY_NAME'],
-                                    $_SERVER['RELAY_DESCRIPTION'],
-                                    (new \nostriphant\NIP19\Bech32($_SERVER['RELAY_OWNER_NPUB']))(),
-                                    $_SERVER['RELAY_CONTACT'],
-                                    supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
-                                    software: \nostriphant\Relay\Relay::software(),
-                                    version: \nostriphant\Relay\Relay::version()
-                            ))
+                body: json_encode($this->information_document)
             );
         }
         

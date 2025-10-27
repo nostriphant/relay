@@ -28,15 +28,7 @@ it('can send a Response containing an NIP-11 compliant information document', fu
             Mockery::mock(\Amp\Websocket\Server\WebsocketClientHandler::class)
     );
     
-    $handler = new \nostriphant\Relay\Amp\RequestHandler($websocket);
-    
-    $response = $handler->handleRequest($request);
-    
-    expect($response->getHeader('Content-Type'))->toBe('application/json');
-    
-    $body = $response->getBody()->read();
-    expect($body)->toBeJson('application/json');
-    expect($body)->tobe(json_encode(new nostriphant\Relay\InformationDocument(
+    $handler = new \nostriphant\Relay\Amp\RequestHandler($websocket, $document = new nostriphant\Relay\InformationDocument(
             name: 'Transpher Relay',
             description: 'Some interesting description goes here',
             pubkey: 'c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01',
@@ -44,5 +36,13 @@ it('can send a Response containing an NIP-11 compliant information document', fu
             supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
             software: \nostriphant\Relay\Relay::software(),
             version: \nostriphant\Relay\Relay::version()
-    )));
+    ));
+    
+    $response = $handler->handleRequest($request);
+    
+    expect($response->getHeader('Content-Type'))->toBe('application/json');
+    
+    $body = $response->getBody()->read();
+    expect($body)->toBeJson('application/json');
+    expect($body)->tobe(json_encode($document));
 });

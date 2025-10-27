@@ -33,7 +33,15 @@ readonly class WebsocketServer {
         //$acceptor = new AllowOriginAcceptor(
         //    ['http://localhost:' . $port, 'http://127.0.0.1:' . $port, 'http://[::1]:' . $port],
         //);
-        $router->addRoute('GET', '/', new RequestHandler(new Websocket($server, $log, $acceptor, $this->clientHandler)));
+        $router->addRoute('GET', '/', new RequestHandler(new Websocket($server, $log, $acceptor, $this->clientHandler), new \nostriphant\Relay\InformationDocument(
+                $_SERVER['RELAY_NAME'],
+                $_SERVER['RELAY_DESCRIPTION'],
+                (new \nostriphant\NIP19\Bech32($_SERVER['RELAY_OWNER_NPUB']))(),
+                $_SERVER['RELAY_CONTACT'],
+                supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
+                software: \nostriphant\Relay\Relay::software(),
+                version: \nostriphant\Relay\Relay::version()
+        )));
 
         ($this->static_routes)(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
         
