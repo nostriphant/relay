@@ -6,11 +6,21 @@ use nostriphant\Stores\Store;
 
 readonly class Relay {
     private Amp\WebsocketServer $server;
+    private InformationDocument $information_document;
     
-    public function __construct(Store $events, string $files_path) {
+    public function __construct(Store $events, string $files_path, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact) {
         $files = new Files($files_path, $events);
         $messageHandlerFactory =  new MessageHandlerFactory($events, $files);
         
+        $this->information_document = new \nostriphant\Relay\InformationDocument(
+                name: $relay_name,
+                description: $relay_description,
+                pubkey: (new \nostriphant\NIP19\Bech32($relay_owner_npub))(),
+                contact: $relay_contact,
+                supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
+                software: \nostriphant\Relay\Relay::software(),
+                version: \nostriphant\Relay\Relay::version()
+        );
         
         $blossom = new Blossom($files);
         $this->server = new Amp\WebsocketServer($messageHandlerFactory, function(callable $define) use ($blossom) : void {
@@ -21,7 +31,7 @@ readonly class Relay {
     }
     
     public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log): callable {
-        return ($this->server)($socket, $max_connections_per_ip, $log);
+        return ($this->server)($socket, $max_connections_per_ip, $this->information_document, $log);
     }
     
     public static function enabled_nips() : array {

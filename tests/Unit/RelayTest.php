@@ -12,7 +12,12 @@ it('can instanatiate Relay', function () {
     
     $engine = new \nostriphant\Stores\Engine\Disk(DATA_DIR);
     $store = new \nostriphant\Stores\Store($engine, []);
-    $relay = new \nostriphant\Relay\Relay($store, FILES_DIR);
+    $relay = new \nostriphant\Relay\Relay($store, FILES_DIR,
+        'Transpher Relay',
+        'Some interesting description goes here',
+        (string) nostriphant\NIP19\Bech32::npub('c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01'),
+        'transpher@nostriphant.dev'
+    );
 
     $logger = Mockery::mock(Psr\Log\LoggerInterface::class);
     $logger->shouldReceive('notice', 'debug', 'info', 'warning');
@@ -32,9 +37,7 @@ it('can instanatiate Relay', function () {
 
 it('can boot a relay instance', function() {
     
-    $socket = sys_get_temp_dir() . '/relay.socket';
-    
-    expect($socket)->not()->toBeFile();
+    $socket = '127.0.0.1:8087';
     
     $log_file = ROOT_DIR . "/logs/relay.log";
     
@@ -62,14 +65,16 @@ it('can boot a relay instance', function() {
     $events = new \nostriphant\Stores\Engine\Disk($store_path);
     $store = new nostriphant\Stores\Store($events, []);
 
-    $relay = new \nostriphant\Relay\Relay($store, __DIR__ . "/data/files");
+    $relay = new \nostriphant\Relay\Relay($store, __DIR__ . "/data/files",
+        "Transpher Relay",
+        "Some interesting description goes here",
+        (string) nostriphant\NIP19\Bech32::npub("c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01"),
+        "transpher@nostriphant.dev"
+    );
 
     $stop = $relay("'.$socket.'", 1000, $logger);
 
-    new nostriphant\Relay\AwaitSignal(function(int $signal) use ($stop, $logger) {
-        $logger->info(sprintf("Received signal %d, stopping Relay server", $signal));
-        $stop();
-    });'];
+    new nostriphant\Relay\AwaitSignal($stop);'];
     $process = proc_open($cmd, $descriptorspec, $pipes, $cwd, []);
     
     expect($process)->toBeResource(file_get_contents($error_file));
@@ -82,10 +87,24 @@ it('can boot a relay instance', function() {
         }
     }
     
-    proc_terminate($process);
-    proc_close($process);
+    $expected_body = json_encode([
+            'name' => 'Transpher Relay',
+            'description' => 'Some interesting description goes here',
+            'pubkey' => 'c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01',
+            'contact' =>'transpher@nostriphant.dev',
+            'supported_nips' => \nostriphant\Relay\Relay::enabled_nips(),
+            'software' => \nostriphant\Relay\Relay::software(),
+            'version' => \nostriphant\Relay\Relay::version()
+    ]);
     
-    unlink($socket);
+    $body = file_get_contents('http://' . $socket . '/');
+    expect($body)->toBeJson();
+    expect($body)->tobe($expected_body);
+    
+    proc_terminate($process);
+    sleep(1);
+    
+    proc_close($process);
     
     expect(file_get_contents($error_file))->toBeEmpty();
     unlink($error_file);

@@ -43,6 +43,6 @@ it('can send a Response containing an NIP-11 compliant information document', fu
     expect($response->getHeader('Content-Type'))->toBe('application/json');
     
     $body = $response->getBody()->read();
-    expect($body)->toBeJson('application/json');
+    expect($body)->toBeJson();
     expect($body)->tobe(json_encode($document));
 });
