@@ -23,4 +23,12 @@ readonly class Relay {
     public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log): callable {
         return ($this->server)($socket, $max_connections_per_ip, $log);
     }
+    
+    public static function software() : string {
+        return json_decode(file_get_contents(dirname(__DIR__) . '/composer.json'))->description;
+    }
+    
+    public static function version() : string {
+        return file_get_contents(dirname(__DIR__) . '/VERSION');
+    }
 }

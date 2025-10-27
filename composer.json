@@ -1,6 +1,6 @@
 {
     "name": "nostriphant/relay",
-    "description": "Nostr Relay in PHP",
+    "description": "'Nostriphant Relay'",
     "require": {
         "php": "^8.4",
         "ext-pcntl": "*",

@@ -1,4 +1,4 @@
-# relay
+# Nostriphant Relay
 PHP relay, part of Transpher
 
 ```php
