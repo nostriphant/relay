@@ -27,9 +27,9 @@ class RequestHandler implements IRequestHandler {
                                     $_SERVER['RELAY_DESCRIPTION'],
                                     (new \nostriphant\NIP19\Bech32($_SERVER['RELAY_OWNER_NPUB']))(),
                                     $_SERVER['RELAY_CONTACT'],
-                                    supported_nips: [1, 2, 9, 11, 12, 13, 16, 20, 22, 33, 45, 92, 94],
-                                    software: $_SERVER['RELAY_SOFTWARE'],
-                                    version: $_SERVER['RELAY_VERSION']
+                                    supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
+                                    software: \nostriphant\Relay\Relay::software(),
+                                    version: \nostriphant\Relay\Relay::version()
                             ))
             );
         }

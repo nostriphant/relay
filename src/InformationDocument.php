@@ -8,7 +8,10 @@ readonly class InformationDocument implements \JsonSerializable {
             private string $name, 
             private string $description, 
             private string $pubkey, 
-            private string $contact
+            private string $contact,
+            private array $supported_nips,
+            private string $software,
+            private string $version
     ) {
         
     }
@@ -19,9 +22,9 @@ readonly class InformationDocument implements \JsonSerializable {
             "description" => $this->description,
             "pubkey" => $this->pubkey,
             "contact" => $this->contact,
-            "supported_nips" => Relay::enabled_nips(),
-            "software" => Relay::software(),
-            "version" => Relay::version()
+            "supported_nips" => $this->supported_nips,
+            "software" => $this->software,
+            "version" => $this->version
         ];
     }
     
