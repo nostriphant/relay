@@ -24,6 +24,10 @@ readonly class Relay {
         return ($this->server)($socket, $max_connections_per_ip, $log);
     }
     
+    public static function enabled_nips() : array {
+        return [1, 2, 9, 11, 12, 13, 16, 20, 22, 33, 45, 92, 94];
+    }
+    
     public static function software() : string {
         return json_decode(file_get_contents(dirname(__DIR__) . '/composer.json'))->description;
     }
