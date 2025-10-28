@@ -46,22 +46,16 @@ it('can boot a relay instance', function() {
     $log_directory = $cwd . "/logs";
     is_dir($log_directory) || mkdir($log_directory);
     
-    $log_file = $log_directory . "/relay.log";
-    
-    $process_id = 'relay-' . substr(sha1($socket), 0, 6);
-    $error_file = $log_directory . "/{$process_id}-errors.log";
     $descriptorspec = [
         0 => ["pipe", "r"],  
-        1 => ["pipe", "w"],  
-        2 => ["file", $error_file, "w"]
+        1 => ["file", $log_directory . "/relay.log", "w"], 
+        2 => ["file", $log_directory . "/relay-" . substr(sha1($socket), 0, 6) . "-errors.log", "w"]
     ];
 
     $cmd = [PHP_BINARY, '-r', '    
     require_once __DIR__ . "/vendor/autoload.php";
 
     $logger = new Monolog\Logger("relay");
-
-    $logger->pushHandler(new Monolog\Handler\StreamHandler("' . $log_file . '", "INFO"));
     $logger->pushHandler(new Monolog\Handler\StreamHandler(STDOUT, "INFO"));
 
     Monolog\ErrorHandler::register($logger);
@@ -83,15 +77,17 @@ it('can boot a relay instance', function() {
     new nostriphant\Relay\AwaitSignal($stop);'];
     $process = proc_open($cmd, $descriptorspec, $pipes, $cwd, []);
     
-    expect($process)->toBeResource(file_get_contents($error_file));
+    expect($process)->toBeResource(file_get_contents($descriptorspec[2][1]));
     
     fclose($pipes[0]);
     
-    while ($line = fgets($pipes[1])) {
+    $log_fhandle = fopen($descriptorspec[1][1], 'r');
+    while ($line = fgets($log_fhandle)) {
         if (str_contains($line, 'Listening on http://' . $socket)) {
             break;
         }
     }
+    fclose($log_fhandle);
     
     $expected_body = json_encode([
             'name' => 'Transpher Relay',
@@ -112,7 +108,7 @@ it('can boot a relay instance', function() {
     
     proc_close($process);
     
-    expect(file_get_contents($error_file))->toBeEmpty();
-    unlink($error_file);
-    unlink($log_file);
+    expect(file_get_contents($descriptorspec[2][1]))->toBeEmpty();
+    unlink($descriptorspec[2][1]);
+    unlink($descriptorspec[1][1]);
 });
