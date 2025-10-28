@@ -3,8 +3,10 @@
 use nostriphant\NIP01Tests\Functions as NIP01TestFunctions;
 use nostriphant\Relay\Files;
 use function \nostriphant\RelayTests\files_directory;
+use function \nostriphant\Relay\data_directory;
 
 beforeAll(function() {
+    expect(data_directory())->toBeDirectory();
     assert(\nostriphant\RelayTests\make_files_directory() === true);
     expect(files_directory())->toBeDirectory();
 });
