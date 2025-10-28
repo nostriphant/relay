@@ -7,8 +7,6 @@ use nostriphant\Stores\Store;
 readonly class Files {
 
     public function __construct(private string $path, private Store $store) {
-        is_dir($path) || mkdir($path) || throw new \Exception('Can not create directory ' . $path);
-
         foreach (glob($path . DIRECTORY_SEPARATOR . '*') as $file) {
             if (is_file($file) === false) {
                 continue;
