@@ -44,7 +44,7 @@ it('can boot a relay instance', function() {
     
     $cwd = ROOT_DIR;
     $log_directory = $cwd . "/logs";
-    is_dir($log_directory) || mk_dir($log_directory);
+    is_dir($log_directory) || mkdir($log_directory);
     
     $log_file = $log_directory . "/relay.log";
     
