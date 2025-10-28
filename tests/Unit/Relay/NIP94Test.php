@@ -4,6 +4,7 @@
 use nostriphant\NIP01Tests\Functions as NIP01TestFunctions;
 use nostriphant\RelayTests\Factory;
 use function Pest\incoming;
+use function \nostriphant\RelayTests\files_directory;
 
 beforeAll(function() {
     assert(\nostriphant\RelayTests\make_files_directory() === true);
@@ -17,8 +18,8 @@ it('downloads NIP-94 files (kind 1063) into a data folder', function () {
     file_put_contents($file, uniqid());
     $hash = hash_file('sha256', $file);
 
-    expect(FILES_DIR . '/' . $hash)->not()->toBeFile();
-    expect(FILES_DIR . '/' . $hash . '.events')->not()->toBeDirectory();
+    expect(files_directory() . '/' . $hash)->not()->toBeFile();
+    expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
 
     $sender_key = NIP01TestFunctions::key_sender();
     $message = Factory::event($sender_key, 1063, 'File caption with the description of its contents',
@@ -32,9 +33,9 @@ it('downloads NIP-94 files (kind 1063) into a data folder', function () {
             ['OK', $message()[1]['id'], true]
     );
 
-    expect(FILES_DIR . '/' . $hash)->toBeFile();
-    expect(FILES_DIR . '/' . $hash . '.events')->toBeDirectory();
-    expect(FILES_DIR . '/' . $hash . '.events/' . $message()[1]['id'])->toBeFile();
+    expect(files_directory() . '/' . $hash)->toBeFile();
+    expect(files_directory() . '/' . $hash . '.events')->toBeDirectory();
+    expect(files_directory() . '/' . $hash . '.events/' . $message()[1]['id'])->toBeFile();
 });
 
 it('refuses NIP-94 files with missing url-tag', function () {
@@ -57,7 +58,7 @@ it('refuses NIP-94 files (kind 1063) with missing hash (x)', function () {
     file_put_contents($file, 'Hello world 2!');
     $hash = hash_file('sha256', $file);
 
-    expect(FILES_DIR . '/' . $hash)->not()->toBeFile();
+    expect(files_directory() . '/' . $hash)->not()->toBeFile();
 
     $sender_key = NIP01TestFunctions::key_sender();
     $message = Factory::event($sender_key, 1063, 'File caption with the description of its contents',
@@ -70,7 +71,7 @@ it('refuses NIP-94 files (kind 1063) with missing hash (x)', function () {
             ['OK', $message()[1]['id'], false, 'invalid:missing x-tag']
     );
 
-    expect(FILES_DIR . '/' . $hash)->not()->toBeFile();
+    expect(files_directory() . '/' . $hash)->not()->toBeFile();
 });
 
 it('refuses NIP-94 files (kind 1063) with missing original hash (ox)', function () {
@@ -78,7 +79,7 @@ it('refuses NIP-94 files (kind 1063) with missing original hash (ox)', function 
     file_put_contents($file, 'Hello world 2!');
     $hash = hash_file('sha256', $file);
 
-    expect(FILES_DIR . '/' . $hash)->not()->toBeFile();
+    expect(files_directory() . '/' . $hash)->not()->toBeFile();
 
     $sender_key = NIP01TestFunctions::key_sender();
     $message = Factory::event($sender_key, 1063, 'File caption with the description of its contents',
@@ -91,5 +92,5 @@ it('refuses NIP-94 files (kind 1063) with missing original hash (ox)', function 
             ['OK', $message()[1]['id'], false, 'invalid:missing ox-tag']
     );
 
-    expect(FILES_DIR . '/' . $hash)->not()->toBeFile();
+    expect(files_directory() . '/' . $hash)->not()->toBeFile();
 });

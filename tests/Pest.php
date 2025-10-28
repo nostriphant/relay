@@ -1,4 +1,5 @@
 <?php
+
 namespace {
     /*
       |--------------------------------------------------------------------------
@@ -67,6 +68,7 @@ namespace Pest {
     use nostriphant\NIP01\Message;
     use nostriphant\Relay\Incoming;
     use nostriphant\NIP01\Transmission;
+    use function \nostriphant\RelayTests\files_directory;
 
 
     function relay(): Transmission {
@@ -90,9 +92,9 @@ namespace Pest {
         return new \nostriphant\Stores\Store(new \nostriphant\Stores\Engine\Memory($events), []);
     }
 
-    function incoming(?\nostriphant\Stores\Store $store = null, string $files = FILES_DIR) {
+    function incoming(?\nostriphant\Stores\Store $store = null, ?string $files = null) {
         $store = $store ?? store();
-        return new Incoming($store, new \nostriphant\Relay\Files($files, $store));
+        return new Incoming($store, new \nostriphant\Relay\Files($files??files_directory(), $store));
     }
 
     function rumor(?int $created_at = null, ?string $pubkey = '', ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP59\Rumor {

@@ -3,6 +3,7 @@
 use nostriphant\NIP01Tests\Functions as NIP01TestFunctions;
 use nostriphant\RelayTests\Factory;
 use function Pest\incoming;
+use function \nostriphant\RelayTests\files_directory;
 
 beforeAll(function() {
     assert(\nostriphant\RelayTests\make_files_directory() === true);
@@ -16,8 +17,8 @@ it('downloads NIP-92 files (kind 1, with imeta tag) into a data folder', functio
     file_put_contents($file, 'downloads NIP-92 files (kind 1, with imeta tag) into a data folder');
     $hash = hash_file('sha256', $file);
 
-    expect(FILES_DIR . '/' . $hash)->not()->toBeFile();
-    expect(FILES_DIR . '/' . $hash . '.events')->not()->toBeDirectory();
+    expect(files_directory() . '/' . $hash)->not()->toBeFile();
+    expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
 
     $sender_key = NIP01TestFunctions::key_sender();
     $message = Factory::event($sender_key, 1, 'Note with a reference to file://' . $file,
@@ -36,7 +37,7 @@ it('downloads NIP-92 files (kind 1, with imeta tag) into a data folder', functio
 
     expect(isset($store[$message()[1]['id']]))->toBeTrue();
 
-    expect(FILES_DIR . '/' . $hash)->toBeFile();
-    expect(FILES_DIR . '/' . $hash . '.events')->toBeDirectory();
-    expect(FILES_DIR . '/' . $hash . '.events/' . $message()[1]['id'])->toBeFile();
+    expect(files_directory() . '/' . $hash)->toBeFile();
+    expect(files_directory() . '/' . $hash . '.events')->toBeDirectory();
+    expect(files_directory() . '/' . $hash . '.events/' . $message()[1]['id'])->toBeFile();
 });
