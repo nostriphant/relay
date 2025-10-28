@@ -10,5 +10,5 @@ function make_data_directory() {
     return is_dir(DATA_DIR) || mkdir(DATA_DIR);
 }
 function destroy_data_directory() {
-    return is_dir(DATA_DIR) === false || rmdir(DATA_DIR);
+    return true;
 }
