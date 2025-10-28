@@ -6,11 +6,11 @@ use function Pest\incoming;
 use function \nostriphant\RelayTests\files_directory;
 
 beforeAll(function() {
-    assert(\nostriphant\RelayTests\make_files_directory() === true);
+    expect(\nostriphant\RelayTests\make_files_directory())->toBeTrue();
     expect(files_directory())->toBeDirectory();
 });
 afterAll(function() {
-    assert(\nostriphant\RelayTests\destroy_files_directory() === true);
+    \nostriphant\RelayTests\destroy_files_directory();
 });
 
 it('downloads NIP-92 files (kind 1, with imeta tag) into a data folder', function () {

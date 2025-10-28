@@ -3,16 +3,13 @@
 use nostriphant\NIP01Tests\Functions as NIP01TestFunctions;
 use nostriphant\Relay\Files;
 use function \nostriphant\RelayTests\files_directory;
-use function \nostriphant\Relay\data_directory;
 
 beforeAll(function() {
-    \nostriphant\Relay\make_data_directory();
-    expect(data_directory())->toBeDirectory();
-    assert(\nostriphant\RelayTests\make_files_directory() === true);
+    expect(\nostriphant\RelayTests\make_files_directory())->toBeTrue();
     expect(files_directory())->toBeDirectory();
 });
 afterAll(function() {
-    assert(\nostriphant\RelayTests\destroy_files_directory() === true);
+    \nostriphant\RelayTests\destroy_files_directory();
 });
 
 it('stores file, when event is in store', function () {

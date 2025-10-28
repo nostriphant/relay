@@ -4,10 +4,11 @@ use function \nostriphant\RelayTests\files_directory;
 use function \nostriphant\Relay\data_directory;
 
 beforeAll(function() {
-    assert(\nostriphant\RelayTests\make_files_directory() === true);
+    expect(\nostriphant\RelayTests\make_files_directory())->toBeTrue();
+    expect(files_directory())->toBeDirectory();
 });
 afterAll(function() {
-    assert(\nostriphant\RelayTests\destroy_files_directory() === true);
+    \nostriphant\RelayTests\destroy_files_directory();
 });
 
 it('can instanatiate Relay', function () {
