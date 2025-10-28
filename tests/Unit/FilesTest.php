@@ -6,6 +6,7 @@ use function \nostriphant\RelayTests\files_directory;
 use function \nostriphant\Relay\data_directory;
 
 beforeAll(function() {
+    \nostriphant\Relay\make_data_directory();
     expect(data_directory())->toBeDirectory();
     assert(\nostriphant\RelayTests\make_files_directory() === true);
     expect(files_directory())->toBeDirectory();
