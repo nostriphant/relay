@@ -7,6 +7,7 @@ use function \nostriphant\RelayTests\files_directory;
 
 beforeAll(function() {
     assert(\nostriphant\RelayTests\make_files_directory() === true);
+    expect(files_directory())->toBeDirectory();
 });
 afterAll(function() {
     assert(\nostriphant\RelayTests\destroy_files_directory() === true);
