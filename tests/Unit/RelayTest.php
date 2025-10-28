@@ -42,11 +42,14 @@ it('can boot a relay instance', function() {
     
     $socket = '127.0.0.1:8087';
     
-    $log_file = ROOT_DIR . "/logs/relay.log";
-    
     $cwd = ROOT_DIR;
+    $log_directory = $cwd . "/logs";
+    is_dir($log_directory) || mk_dir($log_directory);
+    
+    $log_file = $log_directory . "/relay.log";
+    
     $process_id = 'relay-' . substr(sha1($socket), 0, 6);
-    $error_file = $cwd . "/logs/{$process_id}-errors.log";
+    $error_file = $log_directory . "/{$process_id}-errors.log";
     $descriptorspec = [
         0 => ["pipe", "r"],  
         1 => ["pipe", "w"],  
