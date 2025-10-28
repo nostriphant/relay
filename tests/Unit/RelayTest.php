@@ -51,6 +51,7 @@ it('can boot a relay instance', function() {
         1 => ["file", $log_directory . "/relay.log", "w"], 
         2 => ["file", $log_directory . "/relay-" . substr(sha1($socket), 0, 6) . "-errors.log", "w"]
     ];
+    $errors = fn() => file_get_contents($descriptorspec[2][1]);
 
     $cmd = [PHP_BINARY, '-r', '    
     require_once __DIR__ . "/vendor/autoload.php";
@@ -100,7 +101,7 @@ it('can boot a relay instance', function() {
     ]);
     
     $body = file_get_contents('http://' . $socket . '/');
-    expect($body)->toBeJson();
+    expect($body)->toBeJson('Errors: ' . $errors());
     expect($body)->tobe($expected_body);
     
     proc_terminate($process);
@@ -108,7 +109,7 @@ it('can boot a relay instance', function() {
     
     proc_close($process);
     
-    expect(file_get_contents($descriptorspec[2][1]))->toBeEmpty();
+    expect($errors())->toBeEmpty();
     unlink($descriptorspec[2][1]);
     unlink($descriptorspec[1][1]);
 });
