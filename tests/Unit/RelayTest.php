@@ -52,6 +52,7 @@ it('can boot a relay instance', function() {
         2 => ["file", $log_directory . "/relay-" . substr(sha1($socket), 0, 6) . "-errors.log", "w"]
     ];
     $errors = fn() => file_get_contents($descriptorspec[2][1]);
+    $output = fn() => file_get_contents($descriptorspec[1][1]);
 
     $cmd = [PHP_BINARY, '-r', '    
     require_once __DIR__ . "/vendor/autoload.php";
@@ -78,19 +79,16 @@ it('can boot a relay instance', function() {
     new nostriphant\Relay\AwaitSignal($stop);'];
     $process = proc_open($cmd, $descriptorspec, $pipes, $cwd, []);
     
-    expect($process)->toBeResource(file_get_contents($descriptorspec[2][1]));
+    expect($process)->toBeResource($errors());
     
     fclose($pipes[0]);
     
-    $log_fhandle = fopen($descriptorspec[1][1], 'r');
-    while ($line = fgets($log_fhandle)) {
-        if (str_contains($line, 'Listening on http://' . $socket)) {
-            break;
-        }
-    }
-    fclose($log_fhandle);
+    while (str_contains($output(), 'Listening on http://' . $socket) === false){}
     
-    $expected_body = json_encode([
+    
+    $body = file_get_contents('http://' . $socket . '/');
+    expect($body)->toBeJson('Errors: ' . $errors());
+    expect($body)->tobe(json_encode([
             'name' => 'Transpher Relay',
             'description' => 'Some interesting description goes here',
             'pubkey' => 'c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01',
@@ -98,11 +96,7 @@ it('can boot a relay instance', function() {
             'supported_nips' => \nostriphant\Relay\Relay::enabled_nips(),
             'software' => \nostriphant\Relay\Relay::software(),
             'version' => \nostriphant\Relay\Relay::version()
-    ]);
-    
-    $body = file_get_contents('http://' . $socket . '/');
-    expect($body)->toBeJson('Errors: ' . $errors());
-    expect($body)->tobe($expected_body);
+    ]));
     
     proc_terminate($process);
     sleep(1);
