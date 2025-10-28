@@ -39,7 +39,7 @@ readonly class Relay {
     }
     
     public static function software() : string {
-        return json_decode(file_get_contents(dirname(__DIR__) . '/composer.json'))->description;
+        return json_decode(file_get_contents(dirname(__DIR__) . '/composer.json'))->homepage;
     }
     
     public static function version() : string {

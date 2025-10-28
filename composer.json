@@ -1,6 +1,7 @@
 {
     "name": "nostriphant/relay",
     "description": "'Nostriphant Relay'",
+    "homepage" : "https://github.com/nostriphant/relay",
     "require": {
         "php": "^8.4",
         "ext-pcntl": "*",
