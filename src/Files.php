@@ -44,7 +44,10 @@ readonly class Files {
         return $file_path . '.events';
     }
 
-    public function __invoke(string $hash): object {
+    public function __invoke(string $hash): ?object {
+        if (file_exists($this->path) === false) {
+                    return null;
+        }
         return new class($this->path . DIRECTORY_SEPARATOR . $hash, $this->store) {
 
             public function __construct(public string $path, private Store $store) {
@@ -71,7 +74,7 @@ readonly class Files {
 
                 $events_path = Files::makeEventsPath($this->path);
                 is_dir($events_path) || mkdir($events_path);
-                touch($events_path . '/' . $event_id);
+                touch($events_path . DIRECTORY_SEPARATOR . $event_id);
                 return null;
             }
         };

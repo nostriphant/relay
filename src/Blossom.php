@@ -15,6 +15,15 @@ readonly class Blossom {
 
     public function __invoke(string $hash): array {
         $file = ($this->files)($hash);
+        if ($file === null) {
+            return [
+                'code' => 404,
+                'headers' => [
+                    'Content-Type' => 'text/plain'
+                ],
+                'body' => ''
+            ];
+        }
         return [
             'headers' => [
                 'Content-Type' => 'text/plain',

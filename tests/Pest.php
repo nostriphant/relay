@@ -1,6 +1,11 @@
 <?php
 
 namespace {
+
+    use nostriphant\RelayTests\FeatureCase;
+    
+    
+        
     /*
       |--------------------------------------------------------------------------
       | Test Case
@@ -12,8 +17,20 @@ namespace {
       |
      */
 
-    // uses(Tests\TestCase::class)->in('Feature');
-    // uses(\PHPUnit\Framework\TestCase::class)->in('Feature');
+    pest()->extend(FeatureCase::class)
+        ->group('feature')
+        ->in('Feature')
+        ->beforeAll(function() {
+            expect(\nostriphant\RelayTests\make_files_directory())->toBeTrue();
+            expect(\nostriphant\RelayTests\files_directory())->toBeDirectory();
+
+            FeatureCase::relay_process();
+        })
+        ->afterAll(function() {
+            FeatureCase::end_relay_process();
+
+            \nostriphant\RelayTests\destroy_files_directory();
+        });
 
     /*
       |--------------------------------------------------------------------------
@@ -51,6 +68,11 @@ namespace {
     });
 
     nostriphant\FunctionalTests\Pest::extend('expect');
+    
+    
+    pest()->extend(\nostriphant\RelayTests\TestCase::class)
+    ->group('unit')
+    ->in('Unit');
 }
 
 /*
