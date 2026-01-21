@@ -19,9 +19,10 @@ $relay = new \nostriphant\Relay\Relay($store, $files_path,
     "Transpher Relay",
     "Some interesting description goes here",
     (string) nostriphant\NIP19\Bech32::npub("c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01"),
-    "transpher@nostriphant.dev"
+    "transpher@nostriphant.dev", 
+    $logger
 );
 
-$stop = $relay($socket, 1000, $logger);
+$stop = $relay($socket, 1000);
 
 new nostriphant\Relay\AwaitSignal($stop);

@@ -8,7 +8,7 @@ readonly class Relay {
     private Amp\WebsocketServer $server;
     private InformationDocument $information_document;
     
-    public function __construct(Store $events, string $files_path, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact) {
+    public function __construct(Store $events, string $files_path, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
         $files = new Files($files_path, $events);
         $messageHandlerFactory =  new MessageHandlerFactory($events, $files);
         
@@ -23,15 +23,15 @@ readonly class Relay {
         );
         
         $blossom = new Blossom($files);
-        $this->server = new Amp\WebsocketServer($messageHandlerFactory, function(callable $define) use ($blossom) : void {
+        $this->server = new Amp\WebsocketServer($messageHandlerFactory, $log, function(callable $define) use ($blossom) : void {
             foreach (Blossom::ROUTES as $method => $route) {
                 $define($method, $route, $blossom);
             }
         });
     }
     
-    public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log): callable {
-        return ($this->server)($socket, $max_connections_per_ip, $this->information_document, $log);
+    public function __invoke(string $socket, int $max_connections_per_ip): callable {
+        return ($this->server)($socket, $max_connections_per_ip, $this->information_document);
     }
     
     public static function enabled_nips() : array {

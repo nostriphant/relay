@@ -18,23 +18,23 @@ readonly class WebsocketServer {
     
     private \Amp\Websocket\Server\WebsocketClientHandler $clientHandler;
     
-    public function __construct(MessageHandlerFactory $messageHandlerFactory, private \Closure $static_routes) {
+    public function __construct(MessageHandlerFactory $messageHandlerFactory, private LoggerInterface $log, private \Closure $static_routes) {
         $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, new WebsocketClientGateway());   
     }
 
-    public function __invoke(string $socket, int $max_connections_per_ip, \nostriphant\Relay\InformationDocument $information_document, LoggerInterface $log): callable {
+    public function __invoke(string $socket, int $max_connections_per_ip, \nostriphant\Relay\InformationDocument $information_document): callable {
         $errorHandler = new DefaultErrorHandler();
         
-        $server = SocketHttpServer::createForDirectAccess($log, connectionLimitPerIp: $max_connections_per_ip);
+        $server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
         $server->expose($socket);
 
-        $router = new Router($server, $log, $errorHandler);
+        $router = new Router($server, $this->log, $errorHandler);
         $acceptor = new Rfc6455Acceptor();
         //$acceptor = new AllowOriginAcceptor(
         //    ['http://localhost:' . $port, 'http://127.0.0.1:' . $port, 'http://[::1]:' . $port],
         //);
         
-        $websocket = new Websocket($server, $log, $acceptor, $this->clientHandler);
+        $websocket = new Websocket($server, $this->log, $acceptor, $this->clientHandler);
         
         $router->addRoute('GET', '/', new ClosureRequestHandler(function(Request $request) use ($information_document, $websocket): Response {
             $response =  $websocket->handleRequest($request);
