@@ -19,6 +19,7 @@ readonly class MessageHandler implements \nostriphant\Relay\Amp\MessageHandler {
         $this->log->debug('Received json ' . $json);
         try {
             foreach (($this->incoming)($this->subscriptions, Message::decode($json)) as $reply) {
+                $this->log->debug('Sending ' . $reply);
                 ($this->transmission)($reply);
             }
         } catch (\InvalidArgumentException $ex) {
