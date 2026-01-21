@@ -2,7 +2,6 @@
 
 namespace nostriphant\Relay\Amp;
 
-use \Psr\Log\LoggerInterface;
 use Amp\Websocket\Server\WebsocketGateway;
 use Amp\Websocket\WebsocketClient;
 use nostriphant\NIP01\Message;
@@ -12,7 +11,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 
 class WebsocketClientHandler implements \Amp\Websocket\Server\WebsocketClientHandler {
-    public function __construct(private MessageHandlerFactory $message_handler_factory,  private WebsocketGateway $gateway, private LoggerInterface $log) {
+    public function __construct(private MessageHandlerFactory $message_handler_factory,  private WebsocketGateway $gateway) {
 
     }
 
@@ -33,7 +32,6 @@ class WebsocketClientHandler implements \Amp\Websocket\Server\WebsocketClientHan
         });
         
         foreach ($client as $message) {
-            $this->log->debug('Received message ' . $message);
             $message_handler($message);
         }
     }
