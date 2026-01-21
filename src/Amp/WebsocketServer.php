@@ -19,7 +19,7 @@ readonly class WebsocketServer {
     private \Amp\Websocket\Server\WebsocketClientHandler $clientHandler;
     
     public function __construct(MessageHandlerFactory $messageHandlerFactory, private LoggerInterface $log, private \Closure $static_routes) {
-        $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, new WebsocketClientGateway());   
+        $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, new WebsocketClientGateway(), $log);   
     }
 
     public function __invoke(string $socket, int $max_connections_per_ip, \nostriphant\Relay\InformationDocument $information_document): callable {
