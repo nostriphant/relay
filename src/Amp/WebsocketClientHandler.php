@@ -2,6 +2,7 @@
 
 namespace nostriphant\Relay\Amp;
 
+use \Psr\Log\LoggerInterface;
 use Amp\Websocket\Server\WebsocketGateway;
 use Amp\Websocket\WebsocketClient;
 use nostriphant\NIP01\Message;
