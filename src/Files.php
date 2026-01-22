@@ -6,7 +6,12 @@ use nostriphant\Stores\Store;
 
 readonly class Files {
 
+    private \Closure $event_missing;
+    
     public function __construct(private string $path, private Store $store) {
+        
+        $this->event_missing = fn(string $event_id) => isset($this->store[$event_id]) === false;
+        
         foreach (glob($path . DIRECTORY_SEPARATOR . '*') as $file) {
             if (is_file($file) === false) {
                 continue;
@@ -25,8 +30,7 @@ readonly class Files {
             }
 
             foreach ($event_files as $event_file) {
-                $event_id = basename($event_file);
-                if (isset($this->store[$event_id]) === false) {
+                if (($this->event_missing)(basename($event_file))) {
                     unlink($event_file);
                 }
             }
@@ -48,9 +52,9 @@ readonly class Files {
         if (file_exists($this->path) === false) {
                     return null;
         }
-        return new class($this->path . DIRECTORY_SEPARATOR . $hash, $this->store) {
+        return new class($this->path . DIRECTORY_SEPARATOR . $hash, $this->event_missing) {
 
-            public function __construct(public string $path, private Store $store) {
+            public function __construct(public string $path, private \Closure $event_missing) {
                 
             }
 
@@ -60,7 +64,7 @@ readonly class Files {
                 }
 
                 list($event_id, $remote_file) = func_get_args();
-                if (isset($this->store[$event_id]) === false) {
+                if (($this->event_missing)($event_id)) {
                     return null;
                 }
 
