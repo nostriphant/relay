@@ -16,7 +16,7 @@ readonly class MessageHandler implements \nostriphant\Relay\Amp\MessageHandler {
     #[\Override]
     public function __invoke(string $json) : void {
         try {
-            foreach (($this->incoming)($this->subscriptions, Message::decode($json)) as $reply) {
+            foreach (($this->incoming)($this->subscriptions, Message::decode($json), $this->transmission) as $reply) {
                 ($this->transmission)($reply);
             }
         } catch (\InvalidArgumentException $ex) {

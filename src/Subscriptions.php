@@ -22,7 +22,7 @@ class Subscriptions {
 
     public function __invoke(mixed ...$args): mixed {
         return match (true) {
-            func_num_args() === 0 => count(self::$subscriptions),
+            $args[0] instanceof Transmission => self::countFor($args[0]),
             $args[0] instanceof Event => self::apply($args[0]),
             is_string($args[0]) && count($args) === 1 => self::unsubscribe($args[0]),
             is_string($args[0]) => self::subscribe($this->relay, $args[0], $args[1]),
@@ -42,6 +42,10 @@ class Subscriptions {
         yield Message::ok($event->id, true, '');
     }
 
+    static function countFor(Transmission $client) : int {
+        return count(array_filter(self::$subscriptions, fn(callable $subscription) => new \ReflectionFunction($subscription)->getClosureUsedVariables()['relay']));
+    }
+    
     static function subscribe(Transmission $relay, string $subscription_id, array $filter_prototypes): void {
         $test = Condition::makeConditions(new Conditions($filter_prototypes));
         self::$subscriptions[$subscription_id] = fn(Event $event) => $test($event) ? $relay : fn() => false;

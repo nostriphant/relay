@@ -1,9 +1,9 @@
 <?php
 
 it('has a maximum number of subscriptions per connected client.', function () {
-    $subscriptions = \Pest\subscriptions();
+    $subscriptions = \Pest\subscriptions($relay = \Pest\relay());
 
-    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::construct(max_per_client: 1);
+    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::construct(max_per_client: 1, client:$relay);
 
     expect($limits($subscriptions, ['ids' => ['a']]))->toHaveState(accepted: '*');
 
@@ -13,9 +13,9 @@ it('has a maximum number of subscriptions per connected client.', function () {
 });
 
 it('has a maximum number of subscriptions per connected client. Defaults to 10.', function () {
-    $subscriptions = \Pest\subscriptions();
+    $subscriptions = \Pest\subscriptions($relay = \Pest\relay());
 
-    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::construct();
+    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::construct(client:$relay);
 
 
     expect($limits($subscriptions, ['ids' => ['a']]))->toHaveState(accepted: '*');
@@ -29,9 +29,9 @@ it('has a maximum number of subscriptions per connected client. Defaults to 10.'
 
 
 it('has a maximum number of subscriptions per connected client. Disabled when set to zero.', function () {
-    $subscriptions = \Pest\subscriptions();
+    $subscriptions = \Pest\subscriptions($relay = \Pest\relay());
 
-    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::construct(max_per_client: 0);
+    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::construct(max_per_client: 0, client:$relay);
 
     expect($limits($subscriptions, ['ids' => ['a']]))->toHaveState(accepted: '*');
 
@@ -43,10 +43,10 @@ it('has a maximum number of subscriptions per connected client. Disabled when se
 });
 
 it('has a maximum number of subscriptions per connected client, configurable through env-vars. Defaults to 10. Disabled when set to zero.', function () {
-    $subscriptions = \Pest\subscriptions();
+    $subscriptions = \Pest\subscriptions($relay = \Pest\relay());
 
     putenv('LIMIT_REQ_MAX_PER_CLIENT=1');
-    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::fromEnv();
+    $limits = \nostriphant\Relay\Incoming\Req\Accepted\Limits::fromEnv($relay);
 
     expect($limits($subscriptions, ['ids' => ['a']]))->toHaveState(accepted: '*');
 

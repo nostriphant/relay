@@ -142,7 +142,7 @@ namespace Pest {
             }
         };
 
-        foreach (($incoming ?? incoming())($subscriptions ?? subscriptions(), $message) as $reply) {
+        foreach (($incoming ?? incoming())($subscriptions ?? subscriptions(), $message, $to) as $reply) {
             $to($reply);
         }
         return $to;
