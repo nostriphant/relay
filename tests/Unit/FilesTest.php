@@ -1,6 +1,5 @@
 <?php
 
-use nostriphant\NIP01Tests\Functions as NIP01TestFunctions;
 use nostriphant\Relay\Files;
 use function \nostriphant\RelayTests\files_directory;
 
@@ -15,11 +14,7 @@ afterAll(function() {
 it('stores file, when event is in store', function () {
     $event_id = uniqid();
 
-    $store = \Pest\store();
-    $store[$event_id] = NIP01TestFunctions::event(['id' => $event_id = uniqid()]);
-    expect(isset($store[$event_id]))->toBeTrue();
-
-    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
+    $files = new Files(files_directory() . '/', fn() => false);
     $file = tempnam(sys_get_temp_dir(), 'file');
     file_put_contents($file, uniqid());
     $hash = hash_file('sha256', $file);
@@ -34,9 +29,7 @@ it('stores file, when event is in store', function () {
 it('ignores file, when event is NOT in store', function () {
     $event_id = uniqid();
 
-    $store = \Pest\store();
-
-    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
+    $files = new Files(files_directory() . '/', fn() => true);
     $file = tempnam(sys_get_temp_dir(), 'file');
     file_put_contents($file, uniqid());
     $hash = hash_file('sha256', $file);
@@ -48,8 +41,6 @@ it('ignores file, when event is NOT in store', function () {
 
 
 it('removes files, when no events directory', function () {
-    $store = \Pest\store();
-
     $hash = uniqid();
 
     expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
@@ -59,29 +50,25 @@ it('removes files, when no events directory', function () {
     expect(files_directory() . '/' . $hash)->toBeFile();
     expect(files_directory() . '/' . $hash . '.events')->toBeDirectory();
 
-    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
+    $files = new Files(files_directory() . '/', fn() => true);
 
     expect(files_directory() . '/' . $hash)->not()->toBeFile();
     expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
 });
 
 it('removes files, when no events in events directory exist', function () {
-    $store = \Pest\store();
-
     $hash = uniqid();
     file_put_contents(files_directory() . '/' . $hash, uniqid());
     expect(files_directory() . '/' . $hash)->toBeFile();
     expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
 
-    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
+    $files = new Files(files_directory() . '/', fn() => true);
 
     expect(files_directory() . '/' . $hash)->not()->toBeFile();
 });
 
 it('removes files, when event is NOT in store', function () {
     $event_id = uniqid();
-
-    $store = \Pest\store();
 
     $hash = uniqid();
     file_put_contents(files_directory() . '/' . $hash, uniqid());
@@ -91,7 +78,7 @@ it('removes files, when event is NOT in store', function () {
     expect(files_directory() . '/' . $hash . '.events')->toBeDirectory();
     expect(files_directory() . '/' . $hash . '.events/' . $event_id)->toBeFile();
 
-    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
+    $files = new Files(files_directory() . '/', fn() => true);
 
     expect(files_directory() . '/' . $hash . '.events/' . $event_id)->not()->toBeFile();
     expect(files_directory() . '/' . $hash)->not()->toBeFile();
