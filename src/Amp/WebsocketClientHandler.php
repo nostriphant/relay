@@ -23,7 +23,7 @@ readonly class WebsocketClientHandler implements \Amp\Websocket\Server\Websocket
     public function handleClient(WebsocketClient $client, Request $request, Response $response): void {
         $this->gateway->addClient($client);
         
-        $message_handler = ($this->message_handler_factory)(new class($client) implements Transmission {
+        $message_handler = ($this->message_handler_factory)(new class($client, $this->log) implements Transmission {
             public function __construct(private WebsocketClient $client, private \Psr\Log\LoggerInterface $log) {
 
             }
