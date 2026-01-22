@@ -2,15 +2,11 @@
 
 namespace nostriphant\Relay;
 
-use nostriphant\Stores\Store;
-
 readonly class Relay {
     private Amp\WebsocketServer $server;
     private InformationDocument $information_document;
     
-    public function __construct(Store $events, Blossom $blossom, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
-        $messageHandlerFactory =  new MessageHandlerFactory($events, $log);
-        
+    public function __construct(MessageHandlerFactory $messageHandlerFactory, Blossom $blossom, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
         $this->information_document = new \nostriphant\Relay\InformationDocument(
                 name: $relay_name,
                 description: $relay_description,
