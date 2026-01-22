@@ -8,13 +8,13 @@ use nostriphant\NIP01\Message;
 
 readonly class Incoming {
 
-    public function __construct(private Store $events, private Files $files) {
+    public function __construct(private Store $events) {
         
     }
 
     public function __invoke(Subscriptions $subscriptions, Message $message, \nostriphant\NIP01\Transmission $client): \Traversable {
         yield from (match (strtoupper($message->type)) {
-                    'EVENT' => new Incoming\Event(new Incoming\Event\Accepted($this->events, $this->files, $subscriptions), Incoming\Event\Limits::fromEnv()),
+                    'EVENT' => new Incoming\Event(new Incoming\Event\Accepted($this->events, $subscriptions), Incoming\Event\Limits::fromEnv()),
                     'CLOSE' => new Incoming\Close($subscriptions),
                     'REQ' => new Incoming\Req(new Incoming\Req\Accepted($this->events, $subscriptions, Incoming\Req\Accepted\Limits::fromEnv(client:$client)), Incoming\Req\Limits::fromEnv()),
                     'COUNT' => new Incoming\Count($this->events, Incoming\Count\Limits::fromEnv()),

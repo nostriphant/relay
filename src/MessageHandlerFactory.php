@@ -8,8 +8,8 @@ readonly class MessageHandlerFactory implements \nostriphant\Relay\Amp\MessageHa
     
     private Incoming $incoming;
     
-    public function __construct(\nostriphant\Stores\Store $store, Files $files, private LoggerInterface $log) {
-        $this->incoming = new Incoming($store, $files);
+    public function __construct(\nostriphant\Stores\Store $store, private LoggerInterface $log) {
+        $this->incoming = new Incoming($store);
     }
     
     #[\Override]

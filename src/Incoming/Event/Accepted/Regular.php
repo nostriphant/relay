@@ -10,7 +10,6 @@ class Regular {
 
     public function __construct(
             private \nostriphant\Stores\Store $events,
-            private Files $files,
             private \nostriphant\Relay\Subscriptions $subscriptions
     ) {
         
@@ -24,7 +23,7 @@ class Regular {
         } else {
             yield from $kindClass::validate($event)(
                     accepted: function (Event $event) use ($kindClass) {
-                                (new $kindClass($this->events, $this->files))($event);
+                                (new $kindClass($this->events))($event);
                                 yield from ($this->subscriptions)($event);
                             },
                             rejected: fn(string $reason) => yield Message::ok($event->id, false, 'invalid:' . $reason)

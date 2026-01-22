@@ -9,7 +9,7 @@ readonly class Relay {
     private InformationDocument $information_document;
     
     public function __construct(Store $events, Files $files, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
-        $messageHandlerFactory =  new MessageHandlerFactory($events, $files, $log);
+        $messageHandlerFactory =  new MessageHandlerFactory($events, $log);
         
         $this->information_document = new \nostriphant\Relay\InformationDocument(
                 name: $relay_name,
