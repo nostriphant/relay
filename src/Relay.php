@@ -34,7 +34,7 @@ readonly class Relay {
     }
     
     public static function enabled_nips() : array {
-        return [1, 2, 9, 11, 12, 13, 16, 20, 22, 33, 45, 92, 94];
+        return [1, 2, 9, 11, 12, 13, 16, 20, 22, 33, 45];
     }
     
     public static function software() : string {
