@@ -23,13 +23,13 @@ class Subscriptions {
     public function __invoke(mixed ...$args): mixed {
         return match (true) {
             func_num_args() === 0 => count(self::$subscriptions),
-            $args[0] instanceof Event => self::apply(self::$subscriptions, $args[0]),
-            is_string($args[0]) && count($args) === 1 => self::unsubscribe(self::$subscriptions, $args[0]),
-            is_string($args[0]) => self::subscribe(self::$subscriptions, $this->relay, $args[0], $args[1]),
+            $args[0] instanceof Event => self::apply($args[0]),
+            is_string($args[0]) && count($args) === 1 => self::unsubscribe($args[0]),
+            is_string($args[0]) => self::subscribe($this->relay, $args[0], $args[1]),
         };
     }
 
-    static function apply(array &$subscriptions, Event $event): mixed {
+    static function apply(Event $event): mixed {
         array_find(self::$subscriptions, function (callable $subscription, string $subscriptionId) use ($event) {
             $to = $subscription($event);
             if ($to === false) {
@@ -42,12 +42,12 @@ class Subscriptions {
         yield Message::ok($event->id, true, '');
     }
 
-    static function subscribe(array &$subscriptions, Transmission $relay, string $subscription_id, array $filter_prototypes): void {
+    static function subscribe(Transmission $relay, string $subscription_id, array $filter_prototypes): void {
         $test = Condition::makeConditions(new Conditions($filter_prototypes));
         self::$subscriptions[$subscription_id] = fn(Event $event) => $test($event) ? $relay : fn() => false;
     }
 
-    static function unsubscribe(array &$subscriptions, string $subscription_id): void {
+    static function unsubscribe(string $subscription_id): void {
         unset(self::$subscriptions[$subscription_id]);
     }
 }
