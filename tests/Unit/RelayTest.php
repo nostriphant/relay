@@ -17,13 +17,15 @@ it('can instanatiate Relay', function () {
     
     $engine = new \nostriphant\Stores\Engine\Disk(data_directory());
     $store = new \nostriphant\Stores\Store($engine, []);
-    $files = new nostriphant\Relay\Files(files_directory(), fn(string $event_id) => isset($store[$event_id]) === false);;
-    $relay = new \nostriphant\Relay\Relay(new \nostriphant\Relay\MessageHandlerFactory($store, $logger), new nostriphant\Relay\Blossom($files),
+    $files = new nostriphant\Relay\Files(files_directory(), fn(string $event_id) => isset($store[$event_id]) === false);
+    $blossom = new nostriphant\Relay\Blossom($files);
+    $server = new nostriphant\Relay\Amp\WebsocketServer(new \nostriphant\Relay\MessageHandlerFactory($store, $logger), $logger, fn(callable $define) => $blossom($define));
+    
+    $relay = new \nostriphant\Relay\Relay($server,
         'Transpher Relay',
         'Some interesting description goes here',
         (string) nostriphant\NIP19\Bech32::npub('c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01'),
-        'transpher@nostriphant.dev', 
-        $logger
+        'transpher@nostriphant.dev'
     );
     
     $socket_file = sys_get_temp_dir() . '/relay.socket';

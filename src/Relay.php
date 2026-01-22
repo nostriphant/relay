@@ -3,10 +3,9 @@
 namespace nostriphant\Relay;
 
 readonly class Relay {
-    private Amp\WebsocketServer $server;
     private InformationDocument $information_document;
     
-    public function __construct(MessageHandlerFactory $messageHandlerFactory, Blossom $blossom, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
+    public function __construct(private Amp\WebsocketServer $server, string $relay_name, string $relay_description, string $relay_owner_npub, string $relay_contact) {
         $this->information_document = new \nostriphant\Relay\InformationDocument(
                 name: $relay_name,
                 description: $relay_description,
@@ -16,8 +15,6 @@ readonly class Relay {
                 software: \nostriphant\Relay\Relay::software(),
                 version: \nostriphant\Relay\Relay::version()
         );
-        
-        $this->server = new Amp\WebsocketServer($messageHandlerFactory, $log, fn(callable $define) => $blossom($define));
     }
     
     public function __invoke(string $socket, int $max_connections_per_ip): callable {
