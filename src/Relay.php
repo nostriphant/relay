@@ -8,8 +8,7 @@ readonly class Relay {
     private Amp\WebsocketServer $server;
     private InformationDocument $information_document;
     
-    public function __construct(Store $events, string $files_path, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
-        $files = new Files($files_path, fn(string $event_id) => isset($events[$event_id]) === false);
+    public function __construct(Store $events, Files $files, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
         $messageHandlerFactory =  new MessageHandlerFactory($events, $files, $log);
         
         $this->information_document = new \nostriphant\Relay\InformationDocument(

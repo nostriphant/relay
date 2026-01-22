@@ -14,8 +14,9 @@ $files_path = \nostriphant\Relay\data_directory() . "/files";
         
 $events = new \nostriphant\Stores\Engine\Disk($store_path);
 $store = new nostriphant\Stores\Store($events, []);
+$files = new nostriphant\Relay\Files($files_path, fn(string $event_id) => isset($store[$event_id]) === false);
 
-$relay = new \nostriphant\Relay\Relay($store, $files_path,
+$relay = new \nostriphant\Relay\Relay($store, $files,
     "Transpher Relay",
     "Some interesting description goes here",
     (string) nostriphant\NIP19\Bech32::npub("c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01"),
