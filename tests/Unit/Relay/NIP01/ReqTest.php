@@ -216,26 +216,20 @@ describe('REQ', function () {
         $alice_key = NIP01TestFunctions::key_sender();
 
         $subscription = Message::req($id = uniqid(), ['authors' => [$alice_key(Key::public())]]);
-        $recipient = \Pest\handle($subscription, incoming(store: $store), subscriptions: $subscriptions);
-        expect($recipient)->toHaveReceived(
+        $bob = \Pest\handle($subscription, incoming(store: $store), subscriptions: $subscriptions);
+        expect($bob)->toHaveReceived(
                 ['EOSE', $id]
         );
-
-        $key_charlie = NIP01TestFunctions::key_recipient();
-        $event_charlie = Factory::event($key_charlie, 1, 'Hello world!');
-        $recipient = \Pest\handle($event_charlie, incoming(store: $store));
-        expect($recipient)->toHaveReceived(
+        
+        $event = Factory::event($alice_key, 1, 'Relayable Hello worldaaaa!');
+        $alice = \Pest\handle($event, incoming(store: $store), subscriptions: $subscriptions);
+        expect($alice)->toHaveReceived(
                 ['OK']
         );
-
-        $event = Factory::event($alice_key, 1, 'Relayable Hello worlda!');
-        $recipient = \Pest\handle($event, incoming(store: $store), subscriptions: $subscriptions);
-        expect($recipient)->toHaveReceived(
-                ['OK']
-        );
+        
         expect($relay)->toHaveReceived(
                 ['EVENT', $id, function (array $event) {
-                        expect($event['content'])->toBe('Relayable Hello worlda!');
+                        expect($event['content'])->toBe('Relayable Hello worldaaaa!');
                     }],
                 ['EOSE', $id]
         );

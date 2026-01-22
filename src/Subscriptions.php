@@ -10,23 +10,27 @@ use nostriphant\Stores\Conditions;
 
 class Subscriptions {
 
-    private array $subscriptions = [];
+    private static array $subscriptions = [];
 
     public function __construct(private Transmission $relay) {
         
     }
+    
+    public static function reset() {
+        self::$subscriptions = [];
+    }
 
     public function __invoke(mixed ...$args): mixed {
         return match (true) {
-            func_num_args() === 0 => count($this->subscriptions),
-            $args[0] instanceof Event => self::apply($this->subscriptions, $args[0]),
-            is_string($args[0]) && count($args) === 1 => self::unsubscribe($this->subscriptions, $args[0]),
-            is_string($args[0]) => self::subscribe($this->subscriptions, $this->relay, $args[0], $args[1]),
+            func_num_args() === 0 => count(self::$subscriptions),
+            $args[0] instanceof Event => self::apply(self::$subscriptions, $args[0]),
+            is_string($args[0]) && count($args) === 1 => self::unsubscribe(self::$subscriptions, $args[0]),
+            is_string($args[0]) => self::subscribe(self::$subscriptions, $this->relay, $args[0], $args[1]),
         };
     }
 
     static function apply(array &$subscriptions, Event $event): mixed {
-        array_find($subscriptions, function (callable $subscription, string $subscriptionId) use ($event) {
+        array_find(self::$subscriptions, function (callable $subscription, string $subscriptionId) use ($event) {
             $to = $subscription($event);
             if ($to === false) {
                 return false;
@@ -40,10 +44,10 @@ class Subscriptions {
 
     static function subscribe(array &$subscriptions, Transmission $relay, string $subscription_id, array $filter_prototypes): void {
         $test = Condition::makeConditions(new Conditions($filter_prototypes));
-        $subscriptions[$subscription_id] = fn(Event $event) => $test($event) ? $relay : fn() => false;
+        self::$subscriptions[$subscription_id] = fn(Event $event) => $test($event) ? $relay : fn() => false;
     }
 
     static function unsubscribe(array &$subscriptions, string $subscription_id): void {
-        unset($subscriptions[$subscription_id]);
+        unset(self::$subscriptions[$subscription_id]);
     }
 }

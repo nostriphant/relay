@@ -107,6 +107,7 @@ namespace Pest {
     }
 
     function subscriptions(?Transmission $relay = null) {
+        \nostriphant\Relay\Subscriptions::reset();
         return new \nostriphant\Relay\Subscriptions($relay ?? relay());
     }
 
