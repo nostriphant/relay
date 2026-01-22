@@ -21,11 +21,7 @@ readonly class Relay {
                 version: \nostriphant\Relay\Relay::version()
         );
         
-        $this->server = new Amp\WebsocketServer($messageHandlerFactory, $log, function(callable $define) use ($blossom) : void {
-            foreach (Blossom::ROUTES as $method => $route) {
-                $define($method, $route, $blossom);
-            }
-        });
+        $this->server = new Amp\WebsocketServer($messageHandlerFactory, $log, fn(callable $define) => $blossom($define));
     }
     
     public function __invoke(string $socket, int $max_connections_per_ip): callable {
