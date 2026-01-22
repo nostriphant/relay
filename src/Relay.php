@@ -8,7 +8,7 @@ readonly class Relay {
     private Amp\WebsocketServer $server;
     private InformationDocument $information_document;
     
-    public function __construct(Store $events, Files $files, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
+    public function __construct(Store $events, Blossom $blossom, string $relay_name, string $relay_description, string $relay_owner_npub, $relay_contact, \Psr\Log\LoggerInterface $log) {
         $messageHandlerFactory =  new MessageHandlerFactory($events, $log);
         
         $this->information_document = new \nostriphant\Relay\InformationDocument(
@@ -21,7 +21,6 @@ readonly class Relay {
                 version: \nostriphant\Relay\Relay::version()
         );
         
-        $blossom = new Blossom($files);
         $this->server = new Amp\WebsocketServer($messageHandlerFactory, $log, function(callable $define) use ($blossom) : void {
             foreach (Blossom::ROUTES as $method => $route) {
                 $define($method, $route, $blossom);
