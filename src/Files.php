@@ -2,16 +2,9 @@
 
 namespace nostriphant\Relay;
 
-use nostriphant\Stores\Store;
-
 readonly class Files {
 
-    private \Closure $event_missing;
-    
-    public function __construct(private string $path, private Store $store) {
-        
-        $this->event_missing = fn(string $event_id) => isset($this->store[$event_id]) === false;
-        
+    public function __construct(private string $path, private \Closure $event_missing) {
         foreach (glob($path . DIRECTORY_SEPARATOR . '*') as $file) {
             if (is_file($file) === false) {
                 continue;

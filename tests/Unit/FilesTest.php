@@ -19,7 +19,7 @@ it('stores file, when event is in store', function () {
     $store[$event_id] = NIP01TestFunctions::event(['id' => $event_id = uniqid()]);
     expect(isset($store[$event_id]))->toBeTrue();
 
-    $files = new Files(files_directory() . '/', $store);
+    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
     $file = tempnam(sys_get_temp_dir(), 'file');
     file_put_contents($file, uniqid());
     $hash = hash_file('sha256', $file);
@@ -36,7 +36,7 @@ it('ignores file, when event is NOT in store', function () {
 
     $store = \Pest\store();
 
-    $files = new Files(files_directory() . '/', $store);
+    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
     $file = tempnam(sys_get_temp_dir(), 'file');
     file_put_contents($file, uniqid());
     $hash = hash_file('sha256', $file);
@@ -59,7 +59,7 @@ it('removes files, when no events directory', function () {
     expect(files_directory() . '/' . $hash)->toBeFile();
     expect(files_directory() . '/' . $hash . '.events')->toBeDirectory();
 
-    $files = new Files(files_directory() . '/', $store);
+    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
 
     expect(files_directory() . '/' . $hash)->not()->toBeFile();
     expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
@@ -73,7 +73,7 @@ it('removes files, when no events in events directory exist', function () {
     expect(files_directory() . '/' . $hash)->toBeFile();
     expect(files_directory() . '/' . $hash . '.events')->not()->toBeDirectory();
 
-    $files = new Files(files_directory() . '/', $store);
+    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
 
     expect(files_directory() . '/' . $hash)->not()->toBeFile();
 });
@@ -91,7 +91,7 @@ it('removes files, when event is NOT in store', function () {
     expect(files_directory() . '/' . $hash . '.events')->toBeDirectory();
     expect(files_directory() . '/' . $hash . '.events/' . $event_id)->toBeFile();
 
-    $files = new Files(files_directory() . '/', $store);
+    $files = new Files(files_directory() . '/', fn(string $event_id) => isset($store[$event_id]) === false);
 
     expect(files_directory() . '/' . $hash . '.events/' . $event_id)->not()->toBeFile();
     expect(files_directory() . '/' . $hash)->not()->toBeFile();

@@ -117,7 +117,7 @@ namespace Pest {
 
     function incoming(?\nostriphant\Stores\Store $store = null, ?string $files = null) {
         $store = $store ?? store();
-        return new Incoming($store, new \nostriphant\Relay\Files($files??files_directory(), $store));
+        return new Incoming($store, new \nostriphant\Relay\Files($files??files_directory(), fn(string $event_id) => isset($store[$event_id]) === false));
     }
 
     function rumor(?int $created_at = null, ?string $pubkey = '', ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP59\Rumor {
