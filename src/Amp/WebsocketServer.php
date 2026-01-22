@@ -4,7 +4,6 @@ namespace nostriphant\Relay\Amp;
 
 use \Psr\Log\LoggerInterface;
 use nostriphant\Relay\Amp\WebsocketClientHandler;
-use Amp\Websocket\Server\WebsocketClientGateway;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\DefaultErrorHandler;
@@ -19,7 +18,7 @@ readonly class WebsocketServer {
     private \Amp\Websocket\Server\WebsocketClientHandler $clientHandler;
     
     public function __construct(MessageHandlerFactory $messageHandlerFactory, private LoggerInterface $log, private \Closure $static_routes) {
-        $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, new WebsocketClientGateway(), $log);   
+        $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, $log);   
     }
 
     public function __invoke(string $socket, int $max_connections_per_ip, \nostriphant\Relay\InformationDocument $information_document): callable {
