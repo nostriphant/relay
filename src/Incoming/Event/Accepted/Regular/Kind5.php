@@ -4,12 +4,11 @@ namespace nostriphant\Relay\Incoming\Event\Accepted\Regular;
 
 use nostriphant\Functional\Alternate;
 use nostriphant\NIP01\Event;
-use nostriphant\Relay\Files;
 
 readonly class Kind5 implements Kind {
 
     #[\Override]
-    public function __construct(private \nostriphant\Stores\Store $store, private Files $files) {
+    public function __construct(private \nostriphant\Stores\Store $store) {
         
     }
 
