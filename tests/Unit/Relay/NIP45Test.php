@@ -17,7 +17,7 @@ it('accepts a simple COUNT message and returns the number of matching events', f
                 'authors' => [$alice_key(Key::public())]
                     ], [
                 'authors' => [$bob_key(Key::public())]
-            ]), \Pest\incoming(store: $store));
+            ]), \Pest\incoming($store));
 
     expect($recipient)->toHaveReceived(
         ['COUNT', $id, ['count' => 2]]

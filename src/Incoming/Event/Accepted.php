@@ -3,7 +3,6 @@
 namespace nostriphant\Relay\Incoming\Event;
 
 use nostriphant\NIP01\Event;
-use nostriphant\Relay\Files;
 
 class Accepted {
 

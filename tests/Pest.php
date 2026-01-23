@@ -115,9 +115,8 @@ namespace Pest {
         return new \nostriphant\Stores\Store(new \nostriphant\Stores\Engine\Memory($events), []);
     }
 
-    function incoming(?\nostriphant\Stores\Store $store = null, ?string $files = null) {
-        $store = $store ?? store();
-        return new Incoming($store, new \nostriphant\Relay\Files($files??files_directory(), fn(string $event_id) => isset($store[$event_id]) === false));
+    function incoming(?\nostriphant\Stores\Store $store) {
+        return new Incoming($store);
     }
 
     function rumor(?int $created_at = null, ?string $pubkey = '', ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP59\Rumor {
@@ -142,7 +141,7 @@ namespace Pest {
             }
         };
 
-        foreach (($incoming ?? incoming())($subscriptions ?? subscriptions(), $message, $to) as $reply) {
+        foreach (($incoming ?? incoming(store()))($subscriptions ?? subscriptions(), $message, $to) as $reply) {
             $to($reply);
         }
         return $to;

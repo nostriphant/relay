@@ -14,13 +14,13 @@ it('replaces addressable (30000 <= n < 40000) events, keeping only the last one 
         $store = \Pest\store();
 
         $original_event = Factory::event($sender_key, $kind, 'Hello World', ['d', 'my-d-tag-value']);
-        $recipient = \Pest\handle($original_event, incoming(store: $store));
+        $recipient = \Pest\handle($original_event, incoming($store));
 
         expect($recipient)->toHaveReceived(['OK', $original_id = $original_event()[1]['id'], true]);
         expect(isset($store[$original_event()[1]['id']]))->toBeTrue();
 
         $updated_event = Factory::eventAt($sender_key, $kind, 'Updated: hello World', time() + 10, ['d', 'my-d-tag-value']);
-        $recipient = \Pest\handle($updated_event, incoming(store: $store));
+        $recipient = \Pest\handle($updated_event, incoming($store));
 
         expect($recipient)->toHaveReceived(['OK', $updated_id = $updated_event()[1]['id'], true]);
 
@@ -48,11 +48,11 @@ it('keeps addressable (30000 <= n < 40000) events, when same created_at with low
             $updated_event = $event1;
         }
 
-        $recipient = \Pest\handle($original_event, incoming(store: $store));
+        $recipient = \Pest\handle($original_event, incoming($store));
 
         expect(isset($store[$original_event()[1]['id']]))->toBeTrue();
 
-        $recipient = \Pest\handle($updated_event, incoming(store: $store));
+        $recipient = \Pest\handle($updated_event, incoming($store));
 
         expect(isset($store[$original_event()[1]['id']]))->toBeTrue();
         expect(isset($store[$updated_event()[1]['id']]))->toBeFalse();

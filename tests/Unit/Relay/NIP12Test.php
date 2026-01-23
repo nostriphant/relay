@@ -16,12 +16,12 @@ describe('REQ', function () {
 
         $sender_key = NIP01TestFunctions::key_sender();
         $message = Factory::event($sender_key, 1, 'Hello World', [$tag, $tag_value]);
-        $recipient = \Pest\handle($message, incoming(store: $store));
+        $recipient = \Pest\handle($message, incoming($store));
         expect($recipient)->toHaveReceived(
                 ['OK']
         );
 
-        $recipient = \Pest\handle(Message::req($id = uniqid(), ['#' . $tag => [$tag_value]]), incoming(store: $store));
+        $recipient = \Pest\handle(Message::req($id = uniqid(), ['#' . $tag => [$tag_value]]), incoming($store));
         expect($recipient)->toHaveReceived(
                 ['EVENT', $id, function (array $event) {
                         expect($event['content'])->toBe('Hello World');
@@ -42,14 +42,14 @@ describe('REQ', function () {
         $tag = 'p';
         $tag_value = uniqid();
 
-        $recipient = \Pest\handle(Message::req($id = uniqid(), ['#' . $tag => [$tag_value]]), incoming(store: $store), subscriptions: $subscriptions);
+        $recipient = \Pest\handle(Message::req($id = uniqid(), ['#' . $tag => [$tag_value]]), incoming($store), subscriptions: $subscriptions);
         expect($recipient)->toHaveReceived(
                 ['EOSE', $id],
         );
 
         $sender_key = NIP01TestFunctions::key_sender();
         $message = Factory::event($sender_key, 1, 'Hello World', [$tag, $tag_value]);
-        $recipient = \Pest\handle($message, incoming(store: $store), subscriptions: $subscriptions);
+        $recipient = \Pest\handle($message, incoming($store), subscriptions: $subscriptions);
         expect($relay)->toHaveReceived(
                 ['EVENT', $id, function (array $event) {
                         expect($event['content'])->toBe('Hello World');

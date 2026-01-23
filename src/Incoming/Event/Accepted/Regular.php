@@ -4,7 +4,6 @@ namespace nostriphant\Relay\Incoming\Event\Accepted;
 
 use nostriphant\NIP01\Message;
 use nostriphant\NIP01\Event;
-use nostriphant\Relay\Files;
 
 class Regular {
 
