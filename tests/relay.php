@@ -14,8 +14,7 @@ $files_path = \nostriphant\Relay\data_directory() . "/files";
         
 $events = new \nostriphant\Stores\Engine\Disk($store_path);
 $store = new nostriphant\Stores\Store($events, []);
-$files = new nostriphant\Relay\Files($files_path);
-$blossom = new nostriphant\Relay\Blossom($files);
+$blossom = new nostriphant\Relay\Blossom($files_path);
 $server = new nostriphant\Relay\Amp\WebsocketServer(new \nostriphant\Relay\MessageHandlerFactory($store, $logger), $logger, fn(callable $define) => $blossom($define));
 
 $relay = new \nostriphant\Relay\Relay($server,

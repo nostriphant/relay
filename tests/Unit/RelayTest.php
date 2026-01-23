@@ -17,8 +17,7 @@ it('can instanatiate Relay', function () {
     
     $engine = new \nostriphant\Stores\Engine\Disk(data_directory());
     $store = new \nostriphant\Stores\Store($engine, []);
-    $files = new nostriphant\Relay\Files(files_directory());
-    $blossom = new nostriphant\Relay\Blossom($files);
+    $blossom = new nostriphant\Relay\Blossom(files_directory());
     $server = new nostriphant\Relay\Amp\WebsocketServer(new \nostriphant\Relay\MessageHandlerFactory($store, $logger), $logger, fn(callable $define) => $blossom($define));
     
     $relay = new \nostriphant\Relay\Relay($server,
