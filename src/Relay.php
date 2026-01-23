@@ -17,8 +17,8 @@ readonly class Relay {
         );
     }
     
-    public function __invoke(string $socket, int $max_connections_per_ip): callable {
-        return ($this->server)($socket, $max_connections_per_ip, $this->information_document);
+    public function __invoke(\nostriphant\Stores\Store $store, \Closure $static_routes): callable {
+        return ($this->server)(new \nostriphant\Relay\MessageHandlerFactory($store), $static_routes, $this->information_document);
     }
     
     public static function enabled_nips() : array {

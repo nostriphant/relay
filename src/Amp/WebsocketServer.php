@@ -15,25 +15,24 @@ use Amp\Http\Server\RequestHandler\ClosureRequestHandler;
 
 readonly class WebsocketServer {
     
-    private \Amp\Websocket\Server\WebsocketClientHandler $clientHandler;
+    private \Amp\Http\Server\HttpServer $server;
     
-    public function __construct(MessageHandlerFactory $messageHandlerFactory, private LoggerInterface $log, private \Closure $static_routes) {
-        $this->clientHandler = new WebsocketClientHandler($messageHandlerFactory, $log);   
+    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log) {
+        $this->server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
+        $this->server->expose($socket);
     }
 
-    public function __invoke(string $socket, int $max_connections_per_ip, \nostriphant\Relay\InformationDocument $information_document): callable {
+    public function __invoke(MessageHandlerFactory $messageHandlerFactory, \Closure $static_routes, \nostriphant\Relay\InformationDocument $information_document): callable {
         $errorHandler = new DefaultErrorHandler();
-        
-        $server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
-        $server->expose($socket);
+        $clientHandler = new WebsocketClientHandler($messageHandlerFactory, $this->log);   
 
-        $router = new Router($server, $this->log, $errorHandler);
+        $router = new Router($this->server, $this->log, $errorHandler);
         $acceptor = new Rfc6455Acceptor();
         //$acceptor = new AllowOriginAcceptor(
         //    ['http://localhost:' . $port, 'http://127.0.0.1:' . $port, 'http://[::1]:' . $port],
         //);
         
-        $websocket = new Websocket($server, $this->log, $acceptor, $this->clientHandler);
+        $websocket = new Websocket($this->server, $this->log, $acceptor, $clientHandler);
         
         $router->addRoute('GET', '/', new ClosureRequestHandler(function(Request $request) use ($information_document, $websocket): Response {
             if ($request->getHeader('Accept') === 'application/nostr+json') {
@@ -45,11 +44,11 @@ readonly class WebsocketServer {
             return $websocket->handleRequest($request);
         }));
 
-        ($this->static_routes)(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
+        $static_routes(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
         
-        $server->start($router, $errorHandler);
+        $this->server->start($router, $errorHandler);
 
-        return fn() => $server->stop();
+        return fn() => $this->server->stop();
     }
 
 }

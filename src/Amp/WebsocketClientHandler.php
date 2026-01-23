@@ -34,7 +34,7 @@ readonly class WebsocketClientHandler implements \Amp\Websocket\Server\Websocket
                 return true;
             }
 
-        });
+        }, $this->log);
         
         foreach ($client as $message) {
             $json = (string)$message;

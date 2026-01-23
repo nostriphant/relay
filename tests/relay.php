@@ -15,7 +15,7 @@ $files_path = \nostriphant\Relay\data_directory() . "/files";
 $events = new \nostriphant\Stores\Engine\Disk($store_path);
 $store = new nostriphant\Stores\Store($events, []);
 $blossom = new nostriphant\Relay\Blossom($files_path);
-$server = new nostriphant\Relay\Amp\WebsocketServer(new \nostriphant\Relay\MessageHandlerFactory($store, $logger), $logger, fn(callable $define) => $blossom($define));
+$server = new nostriphant\Relay\Amp\WebsocketServer($socket, 1000, $logger);
 
 $relay = new \nostriphant\Relay\Relay($server,
     "Transpher Relay",
@@ -24,6 +24,6 @@ $relay = new \nostriphant\Relay\Relay($server,
     "transpher@nostriphant.dev",
 );
 
-$stop = $relay($socket, 1000);
+$stop = $relay($store, fn(callable $define) => $blossom($define));
 
 new nostriphant\Relay\AwaitSignal($stop);

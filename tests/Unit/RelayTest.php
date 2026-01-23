@@ -15,10 +15,8 @@ it('can instanatiate Relay', function () {
     $logger = Mockery::mock(Psr\Log\LoggerInterface::class);
     $logger->shouldReceive('notice', 'debug', 'info', 'warning');
     
-    $engine = new \nostriphant\Stores\Engine\Disk(data_directory());
-    $store = new \nostriphant\Stores\Store($engine, []);
-    $blossom = new nostriphant\Relay\Blossom(files_directory());
-    $server = new nostriphant\Relay\Amp\WebsocketServer(new \nostriphant\Relay\MessageHandlerFactory($store, $logger), $logger, fn(callable $define) => $blossom($define));
+    $socket_file = sys_get_temp_dir() . '/relay.socket';
+    $server = new nostriphant\Relay\Amp\WebsocketServer($socket_file, 1000, $logger);
     
     $relay = new \nostriphant\Relay\Relay($server,
         'Transpher Relay',
@@ -27,10 +25,12 @@ it('can instanatiate Relay', function () {
         'transpher@nostriphant.dev'
     );
     
-    $socket_file = sys_get_temp_dir() . '/relay.socket';
     
+    $engine = new \nostriphant\Stores\Engine\Disk(data_directory());
+    $store = new \nostriphant\Stores\Store($engine, []);
+    $blossom = new nostriphant\Relay\Blossom(files_directory());
     expect($socket_file)->not()->toBeFile();
-    $stop = $relay($socket_file, 1000);
+    $stop = $relay($store, fn(callable $define) => $blossom($define));
    
     expect($socket_file)->toBeFile();
     
