@@ -51,11 +51,12 @@ abstract class FeatureCase extends BaseTestCase
         unlink(self::LOG_OUTPUT);
     }
     
-    public function expectRelayResponse(string $path, int $code, string $content_type, string $method = 'GET') {
+    public function expectRelayResponse(string $path, int $code, string $content_type, string $method = 'GET', array $headers = []) {
         $curl = curl_init(self::RELAY_URL . $path);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($curl, CURLOPT_NOBODY, $method === 'HEAD');
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         $body = curl_exec($curl);
         $info = curl_getinfo($curl);
         curl_close($curl);

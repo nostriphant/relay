@@ -3,7 +3,7 @@
 namespace nostriphant\RelayTests\Feature;
 
 it('boots a relay instance, which responds with an NIP-11 information document on a "GET /" request', function() {
-    $body = $this->expectRelayResponse('/', 200, 'application/json');
+    $body = $this->expectRelayResponse('/', 200, 'application/nostr+json', headers:['Accept: application/nostr+json']);
     expect($body)->tobe(json_encode([
             'name' => 'Transpher Relay',
             'description' => 'Some interesting description goes here',
@@ -17,7 +17,7 @@ it('boots a relay instance, which responds with an NIP-11 information document o
 
 
 it('boots a relay instance, which responds with an NIP-11 information document on a "GET " request', function() {
-    $body = $this->expectRelayResponse('', 200, 'application/json');
+    $body = $this->expectRelayResponse('', 200, 'application/nostr+json', headers:['Accept: application/nostr+json']);
     expect($body)->tobe(json_encode([
             'name' => 'Transpher Relay',
             'description' => 'Some interesting description goes here',

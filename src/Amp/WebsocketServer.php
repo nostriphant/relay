@@ -36,15 +36,13 @@ readonly class WebsocketServer {
         $websocket = new Websocket($server, $this->log, $acceptor, $this->clientHandler);
         
         $router->addRoute('GET', '/', new ClosureRequestHandler(function(Request $request) use ($information_document, $websocket): Response {
-            $response =  $websocket->handleRequest($request);
-            if ($response->getStatus() === \Amp\Http\HttpStatus::UPGRADE_REQUIRED) {
+            if ($request->getHeader('Accept') === 'application/nostr+json') {
                 return new Response(
-                    headers: ['Content-Type' => 'application/json'],
+                    headers: ['Content-Type' => 'application/nostr+json'],
                     body: json_encode($information_document)
                 );
             }
-
-            return $response;
+            return $websocket->handleRequest($request);
         }));
 
         ($this->static_routes)(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
