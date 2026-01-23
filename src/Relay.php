@@ -17,7 +17,7 @@ readonly class Relay {
         );
     }
     
-    public function __invoke(\nostriphant\Stores\Store $store, \Closure $static_routes): callable {
+    public function __invoke(\nostriphant\Stores\Store $store, callable $static_routes): callable {
         return ($this->server)(new \nostriphant\Relay\MessageHandlerFactory($store), $static_routes, $this->information_document);
     }
     
