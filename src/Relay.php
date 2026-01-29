@@ -17,8 +17,8 @@ readonly class Relay {
         );
     }
     
-    public function __invoke(\nostriphant\Stores\Store $store, callable $static_routes): callable {
-        return ($this->server)(new \nostriphant\Relay\MessageHandlerFactory($store), $static_routes, $this->information_document);
+    public function __invoke(\nostriphant\Stores\Store $store) : callable {
+        return ($this->server)(new \nostriphant\Relay\MessageHandlerFactory($store), $this->information_document);
     }
     
     public static function enabled_nips() : array {

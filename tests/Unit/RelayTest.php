@@ -16,7 +16,8 @@ it('can instanatiate Relay', function () {
     $logger->shouldReceive('notice', 'debug', 'info', 'warning');
     
     $socket_file = sys_get_temp_dir() . '/relay.socket';
-    $server = new nostriphant\Relay\Amp\WebsocketServer($socket_file, 1000, $logger);
+    $blossom = new nostriphant\Relay\Blossom(files_directory());
+    $server = new nostriphant\Relay\Amp\WebsocketServer($socket_file, 1000, $logger, $blossom);
     
     $relay = new \nostriphant\Relay\Relay($server,
         'Transpher Relay',
@@ -28,9 +29,8 @@ it('can instanatiate Relay', function () {
     
     $engine = new \nostriphant\Stores\Engine\Disk(data_directory());
     $store = new \nostriphant\Stores\Store($engine, []);
-    $blossom = new nostriphant\Relay\Blossom(files_directory());
     expect($socket_file)->not()->toBeFile();
-    $stop = $relay($store, $blossom);
+    $stop = $relay($store);
    
     expect($socket_file)->toBeFile();
     

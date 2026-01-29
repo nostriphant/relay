@@ -16,13 +16,16 @@ use Amp\Http\Server\RequestHandler\ClosureRequestHandler;
 readonly class WebsocketServer {
     
     private \Amp\Http\Server\HttpServer $server;
+    private \Closure $static_routes;
     
-    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log) {
+    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log, callable $static_routes) {
+        $this->static_routes = fn() => $static_routes(...func_get_args());
+        
         $this->server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
         $this->server->expose($socket);
     }
 
-    public function __invoke(MessageHandlerFactory $messageHandlerFactory, callable $static_routes, \nostriphant\Relay\InformationDocument $information_document): callable {
+    public function __invoke(MessageHandlerFactory $messageHandlerFactory, \nostriphant\Relay\InformationDocument $information_document): callable {
         $errorHandler = new DefaultErrorHandler();
         $clientHandler = new WebsocketClientHandler($messageHandlerFactory, $this->log);   
 
@@ -44,7 +47,7 @@ readonly class WebsocketServer {
             return $websocket->handleRequest($request);
         }));
 
-        $static_routes(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
+        ($this->static_routes)(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
         
         $this->server->start($router, $errorHandler);
 
