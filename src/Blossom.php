@@ -5,12 +5,7 @@ namespace nostriphant\Relay;
 readonly class Blossom {
     
     private Files $files;
-
-    const ROUTES = [
-        'HEAD' => '/{hash:\w+}',
-        'GET' => '/{hash:\w+}'
-    ];
-
+    
     public function __construct(private string $path) {
        
     }
@@ -46,26 +41,24 @@ readonly class Blossom {
     }
 
     public function __invoke(callable $define) : void {
-        foreach (self::ROUTES as $method => $route) {
-            $define($method, $route, function(string $hash) : array {
-                $file = $this->file($hash);
-                if ($file === null) {
-                    return [
-                        'code' => 404,
-                        'headers' => [
-                            'Content-Type' => 'text/plain'
-                        ],
-                        'body' => ''
-                    ];
-                }
+        $define(['HEAD', 'GET'], '/{hash:\w+}', function(string $hash) : array {
+            $file = $this->file($hash);
+            if ($file === null) {
                 return [
+                    'code' => 404,
                     'headers' => [
-                        'Content-Type' => 'text/plain',
-                        'Content-Length' => filesize($file->path)
+                        'Content-Type' => 'text/plain'
                     ],
-                    'body' => $file()
+                    'body' => ''
                 ];
-            });
-        }
+            }
+            return [
+                'headers' => [
+                    'Content-Type' => 'text/plain',
+                    'Content-Length' => filesize($file->path)
+                ],
+                'body' => $file()
+            ];
+        });
     }
 }
