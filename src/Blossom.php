@@ -11,10 +11,6 @@ readonly class Blossom {
     }
     
     private function file(string $hash) {
-        
-        if (file_exists($this->path) === false) {
-                    return null;
-        }
         return new class($this->path . DIRECTORY_SEPARATOR . $hash) {
 
             public function __construct(public string $path) {
@@ -42,8 +38,9 @@ readonly class Blossom {
 
     public function __invoke(callable $define) : void {
         $define(['HEAD', 'GET'], '/{hash:\w+}', function(string $hash) : array {
-            $file = $this->file($hash);
-            if ($file === null) {
+        
+            $file_path = $this->path . DIRECTORY_SEPARATOR . $hash;
+            if (file_exists($$file_path) === false) {
                 return [
                     'code' => 404,
                     'headers' => [
@@ -52,10 +49,12 @@ readonly class Blossom {
                     'body' => ''
                 ];
             }
+            
+            $file = $this->file($hash);
             return [
                 'headers' => [
                     'Content-Type' => 'text/plain',
-                    'Content-Length' => filesize($file->path)
+                    'Content-Length' => filesize($file_path)
                 ],
                 'body' => $file()
             ];
