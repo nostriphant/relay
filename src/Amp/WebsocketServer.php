@@ -37,6 +37,11 @@ readonly class WebsocketServer {
         
         $websocket = new Websocket($this->server, $this->log, $acceptor, $clientHandler);
         
+        ($this->static_routes)(function(string $method, string $route, callable $endpoint) use ($router) {
+            $handler = new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))));
+            return $router->addRoute($method, $route, $handler);
+        });
+        
         $router->addRoute('GET', '/', new ClosureRequestHandler(function(Request $request) use ($information_document, $websocket): Response {
             if ($request->getHeader('Accept') === 'application/nostr+json') {
                 return new Response(
@@ -46,8 +51,6 @@ readonly class WebsocketServer {
             }
             return $websocket->handleRequest($request);
         }));
-
-        ($this->static_routes)(fn(string $method, string $route, callable $endpoint) => $router->addRoute($method, $route, new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint(...$request->getAttribute(Router::class))))));
         
         $this->server->start($router, $errorHandler);
 
