@@ -2,8 +2,6 @@
 
 namespace nostriphant\Relay;
 
-use \Psr\Log\LoggerInterface;
-
 readonly class MessageHandlerFactory implements \nostriphant\Relay\Amp\MessageHandlerFactory {
     
     private Incoming $incoming;
@@ -13,7 +11,7 @@ readonly class MessageHandlerFactory implements \nostriphant\Relay\Amp\MessageHa
     }
     
     #[\Override]
-    public function __invoke(\nostriphant\NIP01\Transmission $transmission, LoggerInterface $log) : \nostriphant\Relay\Amp\MessageHandler {
-        return new MessageHandler($this->incoming, $transmission, $log);
+    public function __invoke(\nostriphant\NIP01\Transmission $transmission) : \nostriphant\Relay\Amp\MessageHandler {
+        return new MessageHandler($this->incoming, $transmission);
     }
 }
