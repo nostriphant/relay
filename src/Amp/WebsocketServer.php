@@ -22,7 +22,7 @@ readonly class WebsocketServer {
         $this->server->expose($socket);
     }
 
-    public function __invoke(MessageHandlerFactory $messageHandlerFactory, \Closure $static_routes, \nostriphant\Relay\InformationDocument $information_document): callable {
+    public function __invoke(MessageHandlerFactory $messageHandlerFactory, callable $static_routes, \nostriphant\Relay\InformationDocument $information_document): callable {
         $errorHandler = new DefaultErrorHandler();
         $clientHandler = new WebsocketClientHandler($messageHandlerFactory, $this->log);   
 

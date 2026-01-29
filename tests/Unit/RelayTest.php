@@ -30,7 +30,7 @@ it('can instanatiate Relay', function () {
     $store = new \nostriphant\Stores\Store($engine, []);
     $blossom = new nostriphant\Relay\Blossom(files_directory());
     expect($socket_file)->not()->toBeFile();
-    $stop = $relay($store, fn(callable $define) => $blossom($define));
+    $stop = $relay($store, $blossom);
    
     expect($socket_file)->toBeFile();
     
