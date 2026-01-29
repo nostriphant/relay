@@ -4,8 +4,10 @@ namespace nostriphant\Relay;
 
 readonly class Relay {
     private InformationDocument $information_document;
+    private MessageHandlerFactory $message_handler_factory;
     
-    public function __construct(private Amp\WebsocketServer $server, string $relay_name, string $relay_description, string $relay_owner_npub, string $relay_contact) {
+    public function __construct(\nostriphant\Stores\Store $store, string $relay_name, string $relay_description, string $relay_owner_npub, string $relay_contact) {
+        $this->message_handler_factory = new \nostriphant\Relay\MessageHandlerFactory($store);
         $this->information_document = new \nostriphant\Relay\InformationDocument(
                 name: $relay_name,
                 description: $relay_description,
@@ -17,8 +19,8 @@ readonly class Relay {
         );
     }
     
-    public function __invoke(\nostriphant\Stores\Store $store) : callable {
-        return ($this->server)(new \nostriphant\Relay\MessageHandlerFactory($store), $this->information_document);
+    public function __invoke(Amp\WebsocketServer $server) : callable {
+        return $server($this->message_handler_factory , $this->information_document);
     }
     
     public static function enabled_nips() : array {
