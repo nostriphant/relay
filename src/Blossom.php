@@ -4,8 +4,6 @@ namespace nostriphant\Relay;
 
 readonly class Blossom {
     
-    private Files $files;
-    
     public function __construct(private string $path) {
        
     }
