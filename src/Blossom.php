@@ -40,7 +40,7 @@ readonly class Blossom {
         $define(['HEAD', 'GET'], '/{hash:\w+}', function(string $hash) : array {
         
             $file_path = $this->path . DIRECTORY_SEPARATOR . $hash;
-            if (file_exists($$file_path) === false) {
+            if (file_exists($file_path) === false) {
                 return [
                     'code' => 404,
                     'headers' => [
