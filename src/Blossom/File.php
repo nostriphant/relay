@@ -19,10 +19,10 @@ readonly class File implements Endpoint {
         ];
     }
     
-    static function fromPath(string $path) : Endpoint {
-        return match (file_exists($path)) {
-            true => new self($path),
+    static function fromPath(string $path) : callable {
+        return fn(string $hash) => (match (file_exists($path . DIRECTORY_SEPARATOR . $hash)) {
+            true => new self($path . DIRECTORY_SEPARATOR . $hash),
             false => new File\Missing()
-        };
+        })();
     }
 }
