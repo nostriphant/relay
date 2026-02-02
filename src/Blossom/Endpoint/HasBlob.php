@@ -1,8 +1,10 @@
 <?php
 
-namespace nostriphant\Relay\Blossom;
+namespace nostriphant\Relay\Blossom\Endpoint;
 
-readonly class File implements Endpoint {
+use \nostriphant\Relay\Blossom\Endpoint;
+
+readonly class HasBlob implements Endpoint {
     
     public function __construct(private string $path) {
 
@@ -15,7 +17,7 @@ readonly class File implements Endpoint {
                 'Content-Type' => 'text/plain',
                 'Content-Length' => filesize($this->path)
             ],
-            'body' => file_get_contents($this->path)
+            'body' => ''
         ];
     }
     

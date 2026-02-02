@@ -1,6 +1,6 @@
 <?php
 
-namespace nostriphant\Relay\Blossom\File;
+namespace nostriphant\Relay\Blossom\Endpoint\File;
 
 readonly class Missing implements \nostriphant\Relay\Blossom\Endpoint {
     public function __construct() {
