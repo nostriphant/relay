@@ -19,7 +19,7 @@ readonly class WebsocketServer {
     private \Closure $static_routes;
     
     public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log, callable $static_routes) {
-        $this->static_routes = fn() => $static_routes(...func_get_args());
+        $this->static_routes = \Closure::fromCallable($static_routes);
         
         $this->server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
         $this->server->expose($socket);
