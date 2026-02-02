@@ -13,12 +13,15 @@ final readonly class Blob {
         return match($name) {
             'type' => 'text/plain',
             'size' => filesize($this->path),
-            'exists' => file_exists($this->path)
+            'contents' => file_get_contents($this->path)
         };
     }
     
-    public function __invoke(): mixed {
-        return file_get_contents($this->path);
+    public function __invoke(callable $exists, callable $missing): mixed {
+        return match (file_exists($this->path)) {
+            true => $exists($this),
+            false => $missing($this)
+        };
     }
     
 }

@@ -12,16 +12,15 @@ readonly class GetBlob implements Endpoint {
     
     #[\Override]
     public function __invoke(array $attributes): array {
-        $blob = new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']);
-        return match ($blob->exists) {
-            true => [
+        return (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
+            fn(\nostriphant\Relay\Blossom\Blob $blob) => [
                 'headers' => [
                     'Content-Type' => $blob->type,
                     'Content-Length' => $blob->size
                 ],
-                'body' => $blob()
-            ],
-            false => ['code' => 404]
-        };
+                'body' => $blob->contents
+            ], 
+            fn() => ['code' => 404]
+        );
     }
 }
