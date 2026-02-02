@@ -19,8 +19,21 @@ readonly class Relay {
         );
     }
     
-    public function __invoke(Amp\WebsocketServer $server) : callable {
-        return $server($this->message_handler_factory , $this->information_document);
+    public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log, callable $static_routes) : callable {
+        $server = new Amp\WebsocketServer($socket, $max_connections_per_ip, $log, function(callable $define) use ($static_routes) {
+            $define('GET', '/', function(callable $websocket, array $headers) {
+                if (in_array ('application/nostr+json', $headers['accept'] ?? [])) {
+                    return [
+                        'headers' => ['Content-Type' => 'application/nostr+json'],
+                        'body' => json_encode($this->information_document)
+                    ];
+                }
+                return $websocket();
+            });
+        
+            $static_routes($define);
+        });
+        return $server($this->message_handler_factory);
     }
     
     public static function enabled_nips() : array {

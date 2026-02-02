@@ -23,7 +23,6 @@ $relay = new \nostriphant\Relay\Relay($store,
 );
 
 $blossom = new nostriphant\Relay\Blossom($files_path);
-$server = new nostriphant\Relay\Amp\WebsocketServer($socket, 1000, $logger, $blossom);
-$stop = $relay($server);
+$stop = $relay($socket, 1000, $logger, $blossom);
 
 new nostriphant\Relay\AwaitSignal($stop);

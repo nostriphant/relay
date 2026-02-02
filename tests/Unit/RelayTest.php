@@ -28,10 +28,8 @@ it('can instanatiate Relay', function () {
     
     $socket_file = sys_get_temp_dir() . '/relay.socket';
     $blossom = new nostriphant\Relay\Blossom(files_directory());
-    $server = new nostriphant\Relay\Amp\WebsocketServer($socket_file, 1000, $logger, $blossom);
     expect($socket_file)->not()->toBeFile();
-    $stop = $relay($server);
-   
+    $stop = $relay($socket_file, 1000, $logger, $blossom);
     expect($socket_file)->toBeFile();
     
     $stop();
