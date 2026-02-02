@@ -10,9 +10,8 @@ readonly class Blossom {
 
     public function __invoke(callable $define) : void {
         $define(['HEAD', 'GET'], '/{hash:\w+}', function(string $hash) : array {
-        
-            $file_path = $this->path . DIRECTORY_SEPARATOR . $hash;
-            if (Blossom\File::exists($file_path) === false) {
+            $file = new Blossom\File($this->path . DIRECTORY_SEPARATOR . $hash);
+            if (Blossom\File::exists($file) === false) {
                 return [
                     'code' => 404,
                     'headers' => [
@@ -22,11 +21,10 @@ readonly class Blossom {
                 ];
             }
             
-            $file = new Blossom\File($this->path . DIRECTORY_SEPARATOR . $hash);
             return [
                 'headers' => [
                     'Content-Type' => 'text/plain',
-                    'Content-Length' => filesize($file_path)
+                    'Content-Length' => Blossom\File::size($file)
                 ],
                 'body' => $file()
             ];
