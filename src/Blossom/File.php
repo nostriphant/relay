@@ -6,6 +6,10 @@ class File {
     public function __construct(public string $path) {
 
     }
+    
+    static function fromPath(string $path) : self {
+        return new self($path);
+    }
 
     public function __invoke(): array {
         if (file_exists($this->path) === false) {
