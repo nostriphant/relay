@@ -13,13 +13,16 @@ readonly class GetBlob implements Endpoint {
     #[\Override]
     public function __invoke(array $attributes): array {
         $path = $this->path . DIRECTORY_SEPARATOR . $attributes['hash'];
-        return [
-            'headers' => [
-                'Content-Type' => 'text/plain',
-                'Content-Length' => filesize($path)
+        return match (file_exists($path)) {
+            true => [
+                'headers' => [
+                    'Content-Type' => 'text/plain',
+                    'Content-Length' => filesize($path)
+                ],
+                'body' => file_get_contents($path)
             ],
-            'body' => file_get_contents($path)
-        ];
+            false => ['code' => 404]
+        };
     }
     
     static function fromPath(string $path) : Endpoint {
