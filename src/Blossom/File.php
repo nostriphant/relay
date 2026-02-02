@@ -2,7 +2,7 @@
 
 namespace nostriphant\Relay\Blossom;
 
-class File {
+abstract class File {
     
     static function fromPath(string $path) : Endpoint {
         return match (file_exists($path)) {
