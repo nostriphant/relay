@@ -3,20 +3,10 @@
 namespace nostriphant\Relay;
 
 readonly class Relay {
-    private InformationDocument $information_document;
     private MessageHandlerFactory $message_handler_factory;
     
-    public function __construct(\nostriphant\Stores\Store $store, string $relay_name, string $relay_description, string $relay_owner_npub, string $relay_contact) {
+    public function __construct(\nostriphant\Stores\Store $store, private string $name, private string $description, private string $owner_npub, private string $contact) {
         $this->message_handler_factory = new \nostriphant\Relay\MessageHandlerFactory($store);
-        $this->information_document = new \nostriphant\Relay\InformationDocument(
-                name: $relay_name,
-                description: $relay_description,
-                pubkey: (new \nostriphant\NIP19\Bech32($relay_owner_npub))(),
-                contact: $relay_contact,
-                supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
-                software: \nostriphant\Relay\Relay::software(),
-                version: \nostriphant\Relay\Relay::version()
-        );
     }
     
     public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log, callable $static_routes) : callable {
@@ -25,7 +15,15 @@ readonly class Relay {
                 if (in_array ('application/nostr+json', $headers['accept'] ?? [])) {
                     return [
                         'headers' => ['Content-Type' => 'application/nostr+json'],
-                        'body' => json_encode($this->information_document)
+                        'body' => json_encode(new \nostriphant\Relay\InformationDocument(
+                                name: $this->name,
+                                description: $this->description,
+                                pubkey: (new \nostriphant\NIP19\Bech32($this->owner_npub))(),
+                                contact: $this->contact,
+                                supported_nips: \nostriphant\Relay\Relay::enabled_nips(),
+                                software: \nostriphant\Relay\Relay::software(),
+                                version: \nostriphant\Relay\Relay::version()
+                        ))
                     ];
                 }
                 return $websocket();
