@@ -5,12 +5,11 @@ namespace nostriphant\Relay;
 readonly class Relay {
     private MessageHandlerFactory $message_handler_factory;
     
-    public function __construct(\nostriphant\Stores\Store $store, private string $name, private string $description, private string $owner_npub, private string $contact) {
-        $this->message_handler_factory = new \nostriphant\Relay\MessageHandlerFactory($store);
+    public function __construct(private string $name, private string $description, private string $owner_npub, private string $contact) {
     }
     
     public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log, callable $static_routes) : callable {
-        $server = new Amp\WebsocketServer($socket, $max_connections_per_ip, $log, function(callable $define) use ($static_routes) {
+        return new Amp\WebsocketServer($socket, $max_connections_per_ip, $log, function(callable $define) use ($static_routes) {
             $define('GET', '/', function(callable $websocket, array $headers) {
                 if (in_array ('application/nostr+json', $headers['accept'] ?? [])) {
                     return [
@@ -31,7 +30,6 @@ readonly class Relay {
         
             $static_routes($define);
         });
-        return $server($this->message_handler_factory);
     }
     
     public static function enabled_nips() : array {

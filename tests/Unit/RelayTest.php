@@ -17,7 +17,7 @@ it('can instanatiate Relay', function () {
     
     $engine = new \nostriphant\Stores\Engine\Disk(data_directory());
     $store = new \nostriphant\Stores\Store($engine, []);
-    $relay = new \nostriphant\Relay\Relay($store,
+    $relay = new \nostriphant\Relay\Relay(
         'Transpher Relay',
         'Some interesting description goes here',
         (string) nostriphant\NIP19\Bech32::npub('c0bb181bc39c4e59768805bbc5bdd34c508f14b01a298d63be4510d97417ce01'),
@@ -29,7 +29,8 @@ it('can instanatiate Relay', function () {
     $socket_file = sys_get_temp_dir() . '/relay.socket';
     $blossom = new nostriphant\Relay\Blossom(files_directory());
     expect($socket_file)->not()->toBeFile();
-    $stop = $relay($socket_file, 1000, $logger, $blossom);
+    $server = $relay($socket_file, 1000, $logger, $blossom);
+    $stop = $server($store);
     expect($socket_file)->toBeFile();
     
     $stop();
