@@ -16,8 +16,7 @@ readonly class HasBlob implements Endpoint {
             'headers' => [
                 'Content-Type' => 'text/plain',
                 'Content-Length' => filesize($this->path)
-            ],
-            'body' => ''
+            ]
         ];
     }
     
