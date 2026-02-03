@@ -13,12 +13,20 @@ readonly class Blob implements Endpoint {
     #[\Override]
     public function __invoke(callable $define) : array {
         return $define($this->method, '/{hash:\w+}', fn(array $attributes) => (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
-            fn(\nostriphant\Relay\Blossom\Blob $blob) => array_merge([
+            function(\nostriphant\Relay\Blossom\Blob $blob) {
+                $response = [
                     'headers' => [
                         'Content-Type' => $blob->type,
                         'Content-Length' => $blob->size
                     ]
-                ], $this->method === 'HEAD' ? [] : ['body' => $blob->contents]), 
+                ];
+                
+                if ($this->method === 'GET') {
+                    $response['body'] = $blob->contents;
+                }
+            
+                return $response;
+            }, 
             fn() => ['code' => 404]
         ));
     }
