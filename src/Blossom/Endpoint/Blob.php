@@ -23,8 +23,8 @@ readonly class Blob implements Endpoint {
     }
     
     #[\Override]
-    public function __invoke(callable $define) : void {
-        $define($this->method, '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => $this->method === 'HEAD' ? [] : [
+    public function __invoke(callable $define) : array {
+        return $define($this->method, '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => $this->method === 'HEAD' ? [] : [
             'body' => $blob->contents
         ]));
     }
