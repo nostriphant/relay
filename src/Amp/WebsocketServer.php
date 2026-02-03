@@ -16,10 +16,8 @@ use Amp\Http\Server\RequestHandler\ClosureRequestHandler;
 readonly class WebsocketServer {
     
     private \Amp\Http\Server\HttpServer $server;
-    private \Closure $static_routes;
     
-    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log, callable $static_routes) {
-        $this->static_routes = \Closure::fromCallable($static_routes);
+    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log, private \nostriphant\Relay\Routes $static_routes) {
         
         $this->server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
         $this->server->expose($socket);

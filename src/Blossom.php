@@ -8,8 +8,9 @@ readonly class Blossom {
        
     }
 
-    public function __invoke(callable $define) : void {
-        $define('HEAD', '/{hash:\w+}', new Blossom\Endpoint\HasBlob($this->path));
-        $define('GET', '/{hash:\w+}', new Blossom\Endpoint\GetBlob($this->path));
+    public function __invoke(Routes $routes) : Routes {
+        return $routes
+            ->bind(fn($define) => $define('HEAD', '/{hash:\w+}', new Blossom\Endpoint\HasBlob($this->path)))
+            ->bind(fn($define) => $define('GET', '/{hash:\w+}', new Blossom\Endpoint\GetBlob($this->path)));
     }
 }
