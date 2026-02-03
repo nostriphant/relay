@@ -10,7 +10,6 @@ readonly class Blossom {
 
     public function __invoke(Routes $routes) : Routes {
         return $routes
-            ->bind(new Blossom\Endpoint\HasBlob($this->path))
-            ->bind(new Blossom\Endpoint\GetBlob($this->path));
+            ->bind(new Blossom\Endpoint\Blob($this->path));
     }
 }
