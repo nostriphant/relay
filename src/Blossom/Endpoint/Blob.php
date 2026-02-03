@@ -2,7 +2,7 @@
 
 namespace nostriphant\Relay\Blossom\Endpoint;
 
-use \nostriphant\Relay\Blossom\Endpoint;
+use nostriphant\Relay\Blossom\Endpoint;
 
 readonly class Blob implements Endpoint {
     
@@ -10,22 +10,16 @@ readonly class Blob implements Endpoint {
 
     }
     
-    private function makeEndpoint(string $hash, callable $exists) {
-        return (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $hash))(
+    #[\Override]
+    public function __invoke(callable $define) : array {
+        return $define($this->method, '/{hash:\w+}', fn(array $attributes) => (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
             fn(\nostriphant\Relay\Blossom\Blob $blob) => array_merge([
                     'headers' => [
                         'Content-Type' => $blob->type,
                         'Content-Length' => $blob->size
                     ]
-                ],$exists($blob)), 
+                ], $this->method === 'HEAD' ? [] : ['body' => $blob->contents]), 
             fn() => ['code' => 404]
-        );
-    }
-    
-    #[\Override]
-    public function __invoke(callable $define) : array {
-        return $define($this->method, '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => $this->method === 'HEAD' ? [] : [
-            'body' => $blob->contents
-        ]));
+        ));
     }
 }
