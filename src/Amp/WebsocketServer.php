@@ -36,12 +36,13 @@ readonly class WebsocketServer {
         
         $websocket = new Websocket($this->server, $this->log, $acceptor, $clientHandler);
         
-        $routes = ($this->static_routes)(function(string $method, string $route, callable $endpoint) use ($router, $websocket) : array {
-            return [$method, $route, new ClosureRequestHandler(function(Request $request) use ($route, $endpoint, $websocket) { 
-                $response = $endpoint($route === '/' ? fn() => $websocket->handleRequest($request) : $request->getAttribute(Router::class), $request->getHeaders());
-                return new Response(...$response);
-            })];
-        });
+        $routes = ($this->static_routes)(
+            fn(string $method, string $route, callable $endpoint) => [
+                $method, 
+                $route, 
+                new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint($route === '/' ? fn() => $websocket->handleRequest($request) : $request->getAttribute(Router::class), $request->getHeaders())))
+            ]
+     );
         
         array_walk($routes, fn(array $args) => $router->addRoute(...$args));
         
