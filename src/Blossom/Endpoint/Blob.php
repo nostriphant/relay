@@ -12,26 +12,23 @@ readonly class Blob implements Endpoint {
     
     private function makeEndpoint(string $hash, callable $exists) {
         return (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $hash))(
-            $exists, 
+            fn(\nostriphant\Relay\Blossom\Blob $blob) => array_merge([
+                    'headers' => [
+                        'Content-Type' => $blob->type,
+                        'Content-Length' => $blob->size
+                    ]
+                ],$exists($blob)), 
             fn() => ['code' => 404]
         );
     }
     
     #[\Override]
     public function __invoke(callable $define) : void {
+        $define('HEAD', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => []));
+        
         $define('GET', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
-            'headers' => [
-                'Content-Type' => $blob->type,
-                'Content-Length' => $blob->size
-            ],
             'body' => $blob->contents
         ]));
         
-        $define('HEAD', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
-            'headers' => [
-                'Content-Type' => $blob->type,
-                'Content-Length' => $blob->size
-            ]
-        ]));
     }
 }
