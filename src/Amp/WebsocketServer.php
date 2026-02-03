@@ -39,10 +39,7 @@ readonly class WebsocketServer {
         ($this->static_routes)(function(string|array $method, string $route, callable $endpoint) use ($router, $websocket) : void {
             $handler = new ClosureRequestHandler(function(Request $request) use ($route, $endpoint, $websocket) { 
                 $response = $endpoint($route === '/' ? fn() => $websocket->handleRequest($request) : $request->getAttribute(Router::class), $request->getHeaders());
-                if (is_array($response)) {
-                    return new Response(...$response);
-                }
-                return $response;
+                return new Response(...$response);
             });
             
             match (is_string($method)) {
