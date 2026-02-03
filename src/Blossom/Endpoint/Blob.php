@@ -11,8 +11,8 @@ readonly class Blob implements Endpoint {
     }
     
     #[\Override]
-    public function __invoke(callable $define) : array {
-        return $define($this->method, '/{hash:\w+}', fn(array $attributes) => (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
+    public function __invoke(callable $define) : void {
+        $define($this->method, '/{hash:\w+}', fn(array $attributes) => (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
             function(\nostriphant\Relay\Blossom\Blob $blob) {
                 $response = [
                     'headers' => [
