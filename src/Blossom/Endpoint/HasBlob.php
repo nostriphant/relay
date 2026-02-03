@@ -11,15 +11,17 @@ readonly class HasBlob implements Endpoint {
     }
     
     #[\Override]
-    public function __invoke(array $attributes): array {
-        return (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
-            fn(\nostriphant\Relay\Blossom\Blob $blob) => [
-                'headers' => [
-                    'Content-Type' => $blob->type,
-                    'Content-Length' => $blob->size
-                ]
-            ], 
-            fn() => ['code' => 404]
-        );
+    public function __invoke(callable $define) : void {
+        $define('HEAD', '/{hash:\w+}', function(array $attributes): array {
+            return (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $attributes['hash']))(
+                fn(\nostriphant\Relay\Blossom\Blob $blob) => [
+                    'headers' => [
+                        'Content-Type' => $blob->type,
+                        'Content-Length' => $blob->size
+                    ]
+                ], 
+                fn() => ['code' => 404]
+            );
+        });
     }
 }

@@ -5,5 +5,5 @@
 namespace nostriphant\Relay\Blossom;
 
 interface Endpoint {
-    public function __invoke(array $attributes): array;
+    public function __invoke(callable $define) : void;
 }
