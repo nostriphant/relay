@@ -26,6 +26,6 @@ $relay = new \nostriphant\Relay\Relay(new \nostriphant\Relay\InformationDocument
 ));
 
 $blossom = new nostriphant\Relay\Blossom($files_path);
-$server = $relay($socket, 1000, $logger, $blossom(new \nostriphant\Relay\Routes()));
+$server = $relay($socket, 1000, $logger, $blossom(new \nostriphant\Functional\FunctionList()));
 
 new nostriphant\Relay\AwaitSignal($server($store));

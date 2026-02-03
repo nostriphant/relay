@@ -19,7 +19,7 @@
         "nostriphant/nip-59": "^2.0",
         "nostriphant/nip-17": "^2.0",
         "nostriphant/stores": "^2.0",
-        "nostriphant/functional": "^2.2"
+        "nostriphant/functional": "^2.3"
     },
     
     "license": "MIT",

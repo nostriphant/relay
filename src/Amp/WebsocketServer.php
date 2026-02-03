@@ -12,12 +12,13 @@ use Amp\Http\Server\SocketHttpServer;
 use Amp\Websocket\Server\Websocket;
 use Amp\Websocket\Server\Rfc6455Acceptor;
 use Amp\Http\Server\RequestHandler\ClosureRequestHandler;
+use \nostriphant\Functional\FunctionList;
 
 readonly class WebsocketServer {
     
     private \Amp\Http\Server\HttpServer $server;
     
-    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log, private \nostriphant\Relay\Routes $static_routes) {
+    public function __construct(string $socket, int $max_connections_per_ip, private LoggerInterface $log, private FunctionList $static_routes) {
         
         $this->server = SocketHttpServer::createForDirectAccess($this->log, connectionLimitPerIp: $max_connections_per_ip);
         $this->server->expose($socket);

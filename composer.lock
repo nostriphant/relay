@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39f4bd12af35b80b4f3518124f36f52a",
+    "content-hash": "477a9ca862636ff7e212e3b8a2d536ba",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2282,16 +2282,16 @@
         },
         {
             "name": "nostriphant/functional",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nostriphant/functional.git",
-                "reference": "76c1b1a9e5f1db6e356b3591eb434e3ce1d95d76"
+                "reference": "9b417fb74112a380d5cec89050be400e45951d72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nostriphant/functional/zipball/76c1b1a9e5f1db6e356b3591eb434e3ce1d95d76",
-                "reference": "76c1b1a9e5f1db6e356b3591eb434e3ce1d95d76",
+                "url": "https://api.github.com/repos/nostriphant/functional/zipball/9b417fb74112a380d5cec89050be400e45951d72",
+                "reference": "9b417fb74112a380d5cec89050be400e45951d72",
                 "shasum": ""
             },
             "require": {
@@ -2320,9 +2320,9 @@
             "description": "Functional helper classes for nostriphant projects",
             "support": {
                 "issues": "https://github.com/nostriphant/functional/issues",
-                "source": "https://github.com/nostriphant/functional/tree/2.3.0"
+                "source": "https://github.com/nostriphant/functional/tree/2.3.1"
             },
-            "time": "2025-10-22T08:04:22+00:00"
+            "time": "2026-02-03T09:28:54+00:00"
         },
         {
             "name": "nostriphant/nip-01",
