@@ -10,8 +10,8 @@ readonly class Blob implements Endpoint {
 
     }
     
-    static function makeEndpoint(string $path, callable $exists) {
-        return (new \nostriphant\Relay\Blossom\Blob($path))(
+    private function makeEndpoint(string $hash, callable $exists) {
+        return (new \nostriphant\Relay\Blossom\Blob($this->path . DIRECTORY_SEPARATOR . $hash))(
             $exists, 
             fn() => ['code' => 404]
         );
@@ -19,7 +19,7 @@ readonly class Blob implements Endpoint {
     
     #[\Override]
     public function __invoke(callable $define) : void {
-        $define('GET', '/{hash:\w+}', fn(array $attributes) => self::makeEndpoint($this->path . DIRECTORY_SEPARATOR . $attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
+        $define('GET', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
             'headers' => [
                 'Content-Type' => $blob->type,
                 'Content-Length' => $blob->size
@@ -27,7 +27,7 @@ readonly class Blob implements Endpoint {
             'body' => $blob->contents
         ]));
         
-        $define('HEAD', '/{hash:\w+}', fn(array $attributes) => self::makeEndpoint($this->path . DIRECTORY_SEPARATOR . $attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
+        $define('HEAD', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
             'headers' => [
                 'Content-Type' => $blob->type,
                 'Content-Length' => $blob->size
