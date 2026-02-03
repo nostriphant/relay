@@ -6,7 +6,7 @@ use \nostriphant\Relay\Blossom\Endpoint;
 
 readonly class Blob implements Endpoint {
     
-    public function __construct(private string $path) {
+    public function __construct(private string $method, private string $path) {
 
     }
     
@@ -24,11 +24,8 @@ readonly class Blob implements Endpoint {
     
     #[\Override]
     public function __invoke(callable $define) : void {
-        $define('HEAD', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => []));
-        
-        $define('GET', '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => [
+        $define($this->method, '/{hash:\w+}', fn(array $attributes) => $this->makeEndpoint($attributes['hash'], fn(\nostriphant\Relay\Blossom\Blob $blob) => $this->method === 'HEAD' ? [] : [
             'body' => $blob->contents
         ]));
-        
     }
 }
