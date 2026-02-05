@@ -1,6 +1,6 @@
 {
     "name": "nostriphant/relay",
-    "description": "'Nostriphant Relay'",
+    "description": "Nostriphant Relay",
     "homepage" : "https://github.com/nostriphant/relay",
     "require": {
         "php": "^8.4",
@@ -32,7 +32,7 @@
     "authors": [
         {
             "name": "Rik Meijer",
-            "email": "rik@nostriphant.dev"
+            "email": "nostriphant@rikmeijer.nl"
         }
     ],
     "require-dev": {

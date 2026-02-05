@@ -25,7 +25,6 @@ $relay = new \nostriphant\Relay\Relay(new \nostriphant\Relay\InformationDocument
     version: "2.2.0"
 ));
 
-$blossom = new nostriphant\Relay\Blossom($files_path);
-$server = $relay($socket, 1000, $logger, $blossom(new \nostriphant\Functional\FunctionList()));
+$server = $relay($socket, 1000, $logger, new \nostriphant\Functional\FunctionList());
 
 new nostriphant\Relay\AwaitSignal($server($store));
