@@ -25,7 +25,11 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "nostriphant\\Relay\\": "src/",
+            "nostriphant\\Relay\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "nostriphant\\RelayTests\\": "tests/"
         }
     },
