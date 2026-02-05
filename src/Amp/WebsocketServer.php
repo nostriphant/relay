@@ -40,7 +40,11 @@ readonly class WebsocketServer {
             fn(string $method, string $route, callable $endpoint) => $router->addRoute(
                 $method, 
                 $route, 
-                new ClosureRequestHandler(fn(Request $request) => new Response(...$endpoint($route === '/' ? fn() => $websocket->handleRequest($request) : $request->getAttribute(Router::class), $request->getHeaders())))
+                new ClosureRequestHandler(function(Request $request) use ($route, $websocket, $endpoint) {
+                    $response = $endpoint($route === '/' ? fn() => $websocket->handleRequest($request) : $request->getAttribute(Router::class), $request->getHeaders());
+                    return $response instanceof Response ? $response : new Response(...$response);
+                
+                })
             )
         );
         
