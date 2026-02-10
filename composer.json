@@ -58,7 +58,8 @@
         ],
         "test": [
             "@clearCache @no_additional_args",
-            "./vendor/bin/pest"
+            "./vendor/bin/pest",
+	    "killall php8.4"
         ]
     }
 }
