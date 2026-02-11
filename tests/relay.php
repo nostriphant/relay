@@ -25,6 +25,6 @@ $relay = new \nostriphant\Relay\Relay(new \nostriphant\Relay\InformationDocument
     version: "2.2.0"
 ));
 
-$server = $relay($socket, 1000, $logger, new \nostriphant\Functional\FunctionList());
+$server = $relay($socket, 1000, $logger, new \ArrayIterator([]));
 
 new nostriphant\Relay\AwaitSignal($server($store));

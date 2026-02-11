@@ -2292,16 +2292,16 @@
         },
         {
             "name": "nostriphant/functional",
-            "version": "2.5.3",
+            "version": "2.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nostriphant/functional.git",
-                "reference": "2fe8e7ef90e78beae2785e26a2eaad133f6ded18"
+                "reference": "ce27fe952aae09b66c814ca76c5112b0808545a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nostriphant/functional/zipball/2fe8e7ef90e78beae2785e26a2eaad133f6ded18",
-                "reference": "2fe8e7ef90e78beae2785e26a2eaad133f6ded18",
+                "url": "https://api.github.com/repos/nostriphant/functional/zipball/ce27fe952aae09b66c814ca76c5112b0808545a9",
+                "reference": "ce27fe952aae09b66c814ca76c5112b0808545a9",
                 "shasum": ""
             },
             "require": {
@@ -2330,9 +2330,9 @@
             "description": "Functional helper classes for nostriphant projects",
             "support": {
                 "issues": "https://github.com/nostriphant/functional/issues",
-                "source": "https://github.com/nostriphant/functional/tree/2.5.3"
+                "source": "https://github.com/nostriphant/functional/tree/2.5.4"
             },
-            "time": "2026-02-10T14:32:34+00:00"
+            "time": "2026-02-11T10:04:33+00:00"
         },
         {
             "name": "nostriphant/nip-01",
