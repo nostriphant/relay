@@ -20,14 +20,18 @@ readonly class WebsocketClientHandler implements \Amp\Websocket\Server\Websocket
     
     #[\Override]
     public function handleClient(WebsocketClient $client, Request $request, Response $response): void {
-        $this->gateway->addClient($client);
-        
-        $message_handler = ($this->message_handler_factory)(new WebsocketTransmitter($client, $this->log));
-        
-        foreach ($client as $message) {
-            $json = (string)$message;
-            $this->log->debug('Received json ' . $json);
-            $message_handler($json);
+        try {
+            $this->gateway->addClient($client);
+
+            $message_handler = ($this->message_handler_factory)(new WebsocketTransmitter($client, $this->log));
+
+            foreach ($client as $message) {
+                $json = (string)$message;
+                $this->log->debug('Received json ' . $json);
+                $message_handler($json);
+            }
+        } catch (\Amp\Websocket\WebsocketClosedException $e) {
+            $this->log->error('Client '. $client->getRemoteAddress().' went away.');
         }
     }
 }
