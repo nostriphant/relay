@@ -14,7 +14,7 @@ describe('REQ', function () {
     it('sends events to all clients subscribed on tag', function ($tag, $tag_value) {
         $store = \Pest\store();
 
-        $sender_key = NIP01TestFunctions::key_sender();
+        $sender_key = self::key_sender();
         $message = Factory::event($sender_key, 1, 'Hello World', [$tag, $tag_value]);
         $recipient = \Pest\handle($message, incoming($store));
         expect($recipient)->toHaveReceived(
@@ -47,7 +47,7 @@ describe('REQ', function () {
                 ['EOSE', $id],
         );
 
-        $sender_key = NIP01TestFunctions::key_sender();
+        $sender_key = self::key_sender();
         $message = Factory::event($sender_key, 1, 'Hello World', [$tag, $tag_value]);
         $recipient = \Pest\handle($message, incoming($store), subscriptions: $subscriptions);
         expect($relay)->toHaveReceived(
@@ -64,7 +64,7 @@ describe('REQ', function () {
     it('sends events to all clients subscribed on p after restarting the server', function () {
         $tag = 'p';
         $tag_value = uniqid();
-        $sender_key = NIP01TestFunctions::key_sender();
+        $sender_key = self::key_sender();
         $message = Factory::event($sender_key, 1, 'Hello World', [$tag, $tag_value]);
 
         $recipient = \Pest\handle(Message::req($id = uniqid(), ['#' . $tag => [$tag_value]]), incoming(store: store([

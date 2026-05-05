@@ -8,7 +8,7 @@ it('replaces replaceable (n == 3; follow list) events, keeping only the last one
     $store = \Pest\store();
 
     $kind = 3;
-    $sender_key = NIP01TestFunctions::key_sender();
+    $sender_key = self::key_sender();
     $original_event = Factory::event($sender_key, $kind, 'Hello World');
     $recipient = \Pest\handle($original_event, incoming($store));
 
@@ -25,7 +25,7 @@ it('keeps replaceable (n == 3; follow list) events, when same created_at with lo
     $store = \Pest\store();
 
     $kind = 3;
-    $sender_key = NIP01TestFunctions::key_sender();
+    $sender_key = self::key_sender();
     $time = time();
     $event1 = Factory::eventAt($sender_key, $kind, 'Hello World', $time);
     $event2 = Factory::eventAt($sender_key, $kind, 'Updated: hello World', $time);

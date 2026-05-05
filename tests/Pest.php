@@ -119,8 +119,8 @@ namespace Pest {
         return new Incoming($store);
     }
 
-    function rumor(?int $created_at = null, ?string $pubkey = '', ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP59\Rumor {
-        return new \nostriphant\NIP59\Rumor(
+    function rumor(?int $created_at = null, ?string $pubkey = '', ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP01\Rumor {
+        return new \nostriphant\NIP01\Rumor(
                 $created_at ?? time(),
                 $pubkey,
                 $kind,

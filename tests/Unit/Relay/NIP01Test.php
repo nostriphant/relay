@@ -1,8 +1,17 @@
 <?php
 
 describe('generic (https://nips.nostr.com/1#from-relay-to-client-sending-events-and-notices)', function () {
+    
+    it('responds with a OK false on a invalid EVENT prototype', function () {
+        $recipient = \Pest\handle(new nostriphant\NIP01\Message('EVENT', ['dTag' => '']));
+        
+        expect($recipient)->toHaveReceived(
+                ['NOTICE', 'invalid event prototype']
+        );
+    });
+    
     it('responds with a NOTICE on null message', function () {
-        expect(fn() => $recipient = \Pest\handle(null))->toThrow(\TypeError::class);
+        expect(fn() => \Pest\handle(null))->toThrow(\TypeError::class);
     });
 
     it('responds with a NOTICE on unsupported message types', function () {

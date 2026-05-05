@@ -15,9 +15,13 @@ readonly class Event implements Type {
 
     #[\Override]
     public function __invoke(array $payload): \Generator {
-        yield from ($this->limits)(new \nostriphant\NIP01\Event(...$payload[0]))(
+        if (\nostriphant\NIP01\Event::validate($payload[0]) === false) {
+            yield Message::notice('invalid event prototype');
+        } else {
+            yield from ($this->limits)(new \nostriphant\NIP01\Event(...$payload[0]))(
                         accepted: $this->accepted,
                         rejected: fn(string $reason) => yield Message::ok($payload[0]['id'], false, 'invalid:' . $reason)
                 );
+        }
     }
 }
