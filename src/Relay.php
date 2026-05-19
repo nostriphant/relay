@@ -10,7 +10,7 @@ readonly class Relay {
     public function __construct(private \nostriphant\Relay\InformationDocument $information_document) {
     }
     
-    public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log, \Traversable $static_routes) : callable {
+    public function __invoke(string $socket, int $max_connections_per_ip, \Psr\Log\LoggerInterface $log) : callable {
         $nip11_route = fn(callable $define) => $define('GET', '/', function(callable $websocket, array $headers) {
             if (in_array ('application/nostr+json', $headers['accept'] ?? [])) {
                 return new \Amp\Http\Server\Response(...[
@@ -21,6 +21,6 @@ readonly class Relay {
             return $websocket();
         });
         
-        return new Amp\WebsocketServer($socket, $max_connections_per_ip, $log, \nostriphant\Functional\Functions::iterator_merge($static_routes, new \ArrayIterator([$nip11_route])));
+        return new Amp\WebsocketServer($socket, $max_connections_per_ip, $log, new \ArrayIterator([$nip11_route]));
     }
 }
