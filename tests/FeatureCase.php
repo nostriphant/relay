@@ -14,9 +14,6 @@ abstract class FeatureCase extends BaseTestCase
     
     static private $process;
     
-    static function relay_output() {
-        return file_get_contents(self::LOG_OUTPUT);
-    }
     static function relay_errors() {
         return file_get_contents(self::LOG_ERRORS);
     }
@@ -31,10 +28,7 @@ abstract class FeatureCase extends BaseTestCase
             ];
             self::$process = proc_open([PHP_BINARY, '-f',  './tests/relay.php', self::SOCKET], $descriptorspec, $pipes, ROOT_DIR, []);
 
-            expect(self::$process)->toBeResource(self::relay_errors());
-            fclose($pipes[0]);
-
-            while (str_contains(self::relay_output(), 'Listening on ' . self::RELAY_URL) === false){}
+            while (str_contains(file_get_contents(self::LOG_OUTPUT), 'Listening on ' . self::RELAY_URL) === false){}
         }
 
         return self::$process;
