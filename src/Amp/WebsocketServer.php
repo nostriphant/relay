@@ -26,7 +26,7 @@ readonly class WebsocketServer {
 
     public function __invoke(\nostriphant\Stores\Store $store): callable {
         $errorHandler = new DefaultErrorHandler();
-        $clientHandler = new WebsocketClientHandler(new \nostriphant\Relay\MessageHandlerFactory($store), $this->log);   
+        $clientHandler = new WebsocketClientHandler(new \nostriphant\Relay\MessageHandlerFactory($store, $this->log), $this->log);   
 
         $router = new Router($this->server, $this->log, $errorHandler);
         $acceptor = new Rfc6455Acceptor();

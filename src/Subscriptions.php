@@ -12,7 +12,7 @@ class Subscriptions {
 
     private static array $subscriptions = [];
 
-    public function __construct(private Transmission $relay) {
+    public function __construct(private Transmission $relay, private \Psr\Log\LoggerInterface $log) {
         
     }
     
@@ -23,18 +23,21 @@ class Subscriptions {
     public function __invoke(mixed ...$args): mixed {
         return match (true) {
             $args[0] instanceof Transmission => self::countFor($args[0]),
-            $args[0] instanceof Event => self::apply($args[0]),
+            $args[0] instanceof Event => self::apply($args[0], $this->log),
             is_string($args[0]) && count($args) === 1 => self::unsubscribe($args[0]),
             is_string($args[0]) => self::subscribe($this->relay, $args[0], $args[1]),
         };
     }
 
-    static function apply(Event $event): mixed {
-        array_find(self::$subscriptions, function (callable $subscription, string $subscriptionId) use ($event) {
+    static function apply(Event $event, \Psr\Log\LoggerInterface $log): mixed {
+        $log->debug("Applying to " . $event->id);
+        array_find(self::$subscriptions, function (callable $subscription, string $subscriptionId) use ($event, $log) {
             $to = $subscription($event);
             if ($to === false) {
+                $log->debug("Matched subscription " . $subscriptionId . ', but recipient is missing');
                 return false;
             }
+            $log->debug("Matched subscription " . $subscriptionId);
             $to(Message::event($subscriptionId, $event));
             $to(Message::eose($subscriptionId));
             return true;

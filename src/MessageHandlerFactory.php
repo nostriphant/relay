@@ -6,12 +6,12 @@ readonly class MessageHandlerFactory implements \nostriphant\Relay\Amp\MessageHa
     
     private Incoming $incoming;
     
-    public function __construct(\nostriphant\Stores\Store $store) {
+    public function __construct(\nostriphant\Stores\Store $store, private \Psr\Log\LoggerInterface $log) {
         $this->incoming = new Incoming($store);
     }
     
     #[\Override]
     public function __invoke(\nostriphant\NIP01\Transmission $transmission) : \nostriphant\Relay\Amp\MessageHandler {
-        return new MessageHandler($this->incoming, $transmission);
+        return new MessageHandler($this->incoming, $transmission, $this->log);
     }
 }

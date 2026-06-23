@@ -9,8 +9,8 @@ readonly class MessageHandler implements \nostriphant\Relay\Amp\MessageHandler {
     
     private Subscriptions $subscriptions;
     
-    public function __construct(private Incoming $incoming, private Transmission $transmission) {
-        $this->subscriptions = new Subscriptions($transmission);
+    public function __construct(private Incoming $incoming, private Transmission $transmission, private \Psr\Log\LoggerInterface $log) {
+        $this->subscriptions = new Subscriptions($transmission, $this->log);
     }
     
     #[\Override]

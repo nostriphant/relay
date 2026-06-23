@@ -90,7 +90,6 @@ namespace Pest {
     use nostriphant\NIP01\Message;
     use nostriphant\Relay\Incoming;
     use nostriphant\NIP01\Transmission;
-    use function \nostriphant\RelayTests\files_directory;
 
 
     function relay(): Transmission {
@@ -108,7 +107,53 @@ namespace Pest {
 
     function subscriptions(?Transmission $relay = null) {
         \nostriphant\Relay\Subscriptions::reset();
-        return new \nostriphant\Relay\Subscriptions($relay ?? relay());
+        return new \nostriphant\Relay\Subscriptions($relay ?? relay(), new class implements \Psr\Log\LoggerInterface{
+            
+                    #[\Override]
+                    public function alert(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function critical(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function debug(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function emergency(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function error(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function info(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function log($level, string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function notice(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+
+                    #[\Override]
+                    public function warning(string|\Stringable $message, mixed $context = []): void {
+                        
+                    }
+                });
     }
 
     function store(array $events = []) {
