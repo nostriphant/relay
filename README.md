@@ -1,5 +1,5 @@
 # Nostriphant Relay
-PHP relay, part of Transpher
+PHP relay
 
 ```php
 <?php
