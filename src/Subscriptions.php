@@ -34,10 +34,10 @@ class Subscriptions {
         array_find(self::$subscriptions, function (callable $subscription, string $subscriptionId) use ($event, $log) {
             $to = $subscription($event);
             if ($to === false) {
-                $log->debug("Matched subscription " . $subscriptionId . ', but recipient is missing');
+                $log->debug("Not matched subscription " . $subscriptionId);
                 return false;
             }
-            $log->debug("Matched subscription " . $subscriptionId);
+            $log->debug("Matched subscription " . $subscriptionId . var_Export($to, true));
             $to(Message::event($subscriptionId, $event));
             $to(Message::eose($subscriptionId));
             return true;
@@ -51,7 +51,7 @@ class Subscriptions {
     
     static function subscribe(Transmission $relay, string $subscription_id, array $filter_prototypes): void {
         $test = Condition::makeConditions(new Conditions($filter_prototypes));
-        self::$subscriptions[$subscription_id] = fn(Event $event) => $test($event) ? $relay : fn() => false;
+        self::$subscriptions[$subscription_id] = fn(Event $event) => $test($event) ? $relay : false;
     }
 
     static function unsubscribe(string $subscription_id): void {
