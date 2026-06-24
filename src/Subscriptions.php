@@ -37,7 +37,7 @@ class Subscriptions {
                 $log->debug("Not matched subscription " . $subscriptionId);
                 return false;
             }
-            $log->debug("Matched subscription " . $subscriptionId . var_Export($to, true));
+            $log->debug("Matched subscription " . $subscriptionId);
             $to(Message::event($subscriptionId, $event));
             $to(Message::eose($subscriptionId));
             return true;
