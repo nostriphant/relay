@@ -2,14 +2,15 @@
 
 use nostriphant\NIP01Tests\Functions as NIP01TestFunctions;
 use nostriphant\Relay\Incoming\Event\Limits;
+use nostriphant\NIP01\Event\Unsigned;
 
 it('SHOULD send the client an OK result saying the event was not stored for the created_at timestamp not being within the permitted limits.', function (int $kind) {
     $limits = Limits::construct();
 
-    $limit = $limits(\Pest\rumor(kind: $kind, pubkey: self::pubkey_sender(), created_at: time() - (60 * 60 * 24) - 5)(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: $kind, created_at: time() - (60 * 60 * 24) - 5)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['the event created_at field is out of the acceptable range (-24h) for this relay']);
 
-    $limit = $limits(\Pest\rumor(kind: $kind, pubkey: self::pubkey_sender(), created_at: time() + (60 * 15) + 5)(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: $kind, created_at: time() + (60 * 15) + 5)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['the event created_at field is out of the acceptable range (+15min) for this relay']);
 })->with([
     'regular' => 1,
@@ -23,10 +24,10 @@ it('can be configured for event kinds to always allow. Leave empty to allow any.
             kind_whitelist: [1]
     );
 
-    $limit = $limits(\Pest\rumor(kind: 1, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1)(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
 
-    $limit = $limits(\Pest\rumor(kind: 2, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 2)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['event kind is not whitelisted']);
 });
 
@@ -35,10 +36,10 @@ it('can be configured for event kinds to always deny. Leave empty to allow any.'
             kind_blacklist: [1]
     );
 
-    $limit = $limits(\Pest\rumor(kind: 1, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['event kind is blacklisted']);
 
-    $limit = $limits(\Pest\rumor(kind: 2, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 2)(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
 });
 
@@ -48,10 +49,10 @@ it('can be configured for event content max limit.', function () {
             content_maxlength: 10
     );
 
-    $limit = $limits(\Pest\rumor(kind: 1, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 1, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1)(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
 });
 
@@ -61,10 +62,10 @@ it('can be configured for event content max limit, only for a certain event kind
             content_maxlength: [10, 1]
     );
 
-    $limit = $limits(\Pest\rumor(kind: 1, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 0, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 0, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
 });
 
@@ -74,22 +75,22 @@ it('can be configured for event content max limit, only for certain event kinds.
             content_maxlength: [10, 1, 5]
     );
 
-    $limit = $limits(\Pest\rumor(kind: 1, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 2, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 2, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 3, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 3, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 4, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 4, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 5, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 5, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 0, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 0, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
 });
 
@@ -98,10 +99,10 @@ it('SHOULD send the client an OK result saying the event was not stored for the 
     putenv('LIMIT_EVENT_CREATED_AT_UPPER_DELTA=15');
     $limits = Limits::fromEnv();
 
-    $limit = $limits(\Pest\rumor(kind: $kind, pubkey: self::pubkey_sender(), created_at: time() - 62)(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: $kind, created_at: time() - 62)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['the event created_at field is out of the acceptable range (-60sec) for this relay']);
 
-    $limit = $limits(\Pest\rumor(kind: $kind, pubkey: self::pubkey_sender(), created_at: time() + 17)(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: $kind, created_at: time() + 17)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['the event created_at field is out of the acceptable range (+15sec) for this relay']);
 })->with([
     'regular' => 1,
@@ -114,10 +115,10 @@ it('can be configured through env-vars for event kinds to always allow. Leave em
     putenv('LIMIT_EVENT_KIND_WHITELIST=1');
     $limits = Limits::fromEnv();
 
-    $limit = $limits(\Pest\rumor(kind: 1, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1)(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
 
-    $limit = $limits(\Pest\rumor(kind: 2, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 2)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['event kind is not whitelisted']);
     putenv('LIMIT_EVENT_KIND_WHITELIST');
 });
@@ -126,10 +127,10 @@ it('can be configured through env-vars for event kinds to always deny. Leave emp
     putenv('LIMIT_EVENT_KIND_BLACKLIST=1');
     $limits = Limits::fromEnv();
 
-    $limit = $limits(\Pest\rumor(kind: 1, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1)(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['event kind is blacklisted']);
 
-    $limit = $limits(\Pest\rumor(kind: 2, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 2)(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
     putenv('LIMIT_EVENT_KIND_BLACKLIST');
 });
@@ -138,10 +139,10 @@ it('can be configured through env-vars for event content max limit.', function (
     putenv('LIMIT_EVENT_CONTENT_MAXLENGTH=10');
     $limits = Limits::fromEnv();
 
-    $limit = $limits(\Pest\rumor(kind: 1, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 1, pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1)(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
     putenv('LIMIT_EVENT_CONTENT_MAXLENGTH');
 });
@@ -150,10 +151,10 @@ it('can be configured through env-vars for event content max limit, only for a c
     putenv('LIMIT_EVENT_CONTENT_MAXLENGTH=10,1');
     $limits = Limits::fromEnv();
 
-    $limit = $limits(\Pest\rumor(kind: 1, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 0, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 0, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
     putenv('LIMIT_EVENT_CONTENT_MAXLENGTH');
 });
@@ -162,22 +163,22 @@ it('can be configured through env-vars for event content max limit, only for cer
     putenv('LIMIT_EVENT_CONTENT_MAXLENGTH=10,1,5');
     $limits = Limits::fromEnv();
 
-    $limit = $limits(\Pest\rumor(kind: 1, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 1, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 2, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 2, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 3, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 3, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 4, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 4, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 5, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 5, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(rejected: ['content is longer than 10 bytes']);
 
-    $limit = $limits(\Pest\rumor(kind: 0, content: str_repeat('a', 11), pubkey: self::pubkey_sender())(self::key_sender()));
+    $limit = $limits(\Pest\unsigned(kind: 0, content: str_repeat('a', 11))(self::key_sender()));
     expect($limit)->toHaveState(accepted: '*');
     putenv('LIMIT_EVENT_CONTENT_MAXLENGTH');
 });

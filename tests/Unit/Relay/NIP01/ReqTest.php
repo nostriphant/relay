@@ -7,7 +7,7 @@ use function Pest\incoming;
 
 describe('REQ', function () {
     it('replies NOTICE Invalid message on non-existing filters', function () {
-        
+
 
         $recipient = \Pest\handle(new \nostriphant\NIP01\Message('REQ'));
 
@@ -16,7 +16,7 @@ describe('REQ', function () {
         );
     });
     it('replies CLOSED on empty filters', function () {
-        
+
 
         $recipient = \Pest\handle(Message::req($id = uniqid(), []));
 
@@ -25,7 +25,7 @@ describe('REQ', function () {
         );
     });
     it('can handle a subscription request, for non existing events', function () {
-        
+
 
         $recipient = \Pest\handle(Message::req($id = uniqid(), ['ids' => ['abdcd']]));
 
@@ -52,7 +52,7 @@ describe('REQ', function () {
                 ['OK']
         );
 
-        $recipient = \Pest\handle(Message::req($id = uniqid(), ['authors' => [$sender_key(Key::public())]]), incoming($store));
+        $recipient = \Pest\handle(Message::req($id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)]]), incoming($store));
         expect($recipient)->toHaveReceived(
                 ['EVENT', $id, function (array $event) {
                         expect($event['content'])->toBe('Hello World');
@@ -102,7 +102,7 @@ describe('REQ', function () {
         );
 
         $subscription = Factory::subscribe(
-                ["authors" => [$alice_key(Key::public())]]
+                ["authors" => [Key::derivePublicKey($alice_key)]]
         );
         $bob = \Pest\handle($subscription, incoming($store));
         expect($bob)->toHaveReceived(
@@ -132,10 +132,10 @@ describe('REQ', function () {
         );
 
         $recipient = \Pest\handle(Message::req($id = uniqid(), [
-                    'authors' => [$alice_key(Key::public())]
-            ], [
-                'authors' => [$bob_key(Key::public())]
-        ]), incoming($store), subscriptions: $subscriptions);
+                    'authors' => [Key::derivePublicKey($alice_key)]
+                        ], [
+                'authors' => [Key::derivePublicKey($bob_key)]
+                ]), incoming($store), subscriptions: $subscriptions);
 
         expect($recipient)->toHaveReceived(
                 ['EVENT', $id, function (array $event) {
@@ -161,7 +161,7 @@ describe('REQ', function () {
         );
 
         $subscription = Factory::subscribe(
-                ["authors" => [$alice_key(Key::public())]]
+                ["authors" => [Key::derivePublicKey($alice_key)]]
         );
         $bob = \Pest\handle($subscription, incoming($store), subscriptions: $subscriptions);
         expect($bob)->toHaveReceived(
@@ -214,18 +214,18 @@ describe('REQ', function () {
 
         $alice_key = self::key_sender();
 
-        $subscription = Message::req($id = uniqid(), ['authors' => [$alice_key(Key::public())]]);
+        $subscription = Message::req($id = uniqid(), ['authors' => [Key::derivePublicKey($alice_key)]]);
         $bob = \Pest\handle($subscription, incoming($store), subscriptions: $subscriptions);
         expect($bob)->toHaveReceived(
                 ['EOSE', $id]
         );
-        
+
         $event = Factory::event($alice_key, 1, 'Relayable Hello worldaaaa!');
         $alice = \Pest\handle($event, incoming($store), subscriptions: $subscriptions);
         expect($alice)->toHaveReceived(
                 ['OK']
         );
-        
+
         expect($relay)->toHaveReceived(
                 ['EVENT', $id, function (array $event) {
                         expect($event['content'])->toBe('Relayable Hello worldaaaa!');
@@ -247,8 +247,8 @@ describe('REQ', function () {
         expect(isset($store[$alice_event()[1]['id']]))->toBeTrue();
 
         $subscription = Factory::subscribe(
-                ["authors" => [$alice_key(Key::public())]]
-                );
+                ["authors" => [Key::derivePublicKey($alice_key)]]
+        );
         $bob = \Pest\handle($subscription, incoming($store));
         expect($bob)->toHaveReceived(
                 ['EVENT', $subscription()[1], function (array $event) {

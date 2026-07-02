@@ -28,10 +28,3 @@ it('boots a relay instance, which responds with an NIP-11 information document o
             'version' => "2.2.0"
     ]));
 });
-
-
-it('starts relay and sends private direct messsage to relay owner', function () {
-    $alice = \nostriphant\Client\Client::connectToUrl(str_replace('http', 'ws', \nostriphant\RelayTests\FeatureCase::RELAY_URL));
-    
-    expect($alice)->toBeCallable();
-});

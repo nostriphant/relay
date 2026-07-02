@@ -3,9 +3,9 @@
 namespace {
 
     use nostriphant\RelayTests\FeatureCase;
-    
-    
-        
+
+
+
     /*
       |--------------------------------------------------------------------------
       | Test Case
@@ -68,8 +68,8 @@ namespace {
     });
 
     nostriphant\FunctionalTests\Pest::extend('expect');
-    
-    
+
+
     pest()->extend(\nostriphant\RelayTests\TestCase::class)
     ->group('unit')
     ->in('Unit');
@@ -108,50 +108,50 @@ namespace Pest {
     function subscriptions(?Transmission $relay = null) {
         \nostriphant\Relay\Subscriptions::reset();
         return new \nostriphant\Relay\Subscriptions($relay ?? relay(), new class implements \Psr\Log\LoggerInterface{
-            
+
                     #[\Override]
                     public function alert(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function critical(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function debug(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function emergency(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function error(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function info(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function log($level, string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function notice(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
 
                     #[\Override]
                     public function warning(string|\Stringable $message, mixed $context = []): void {
-                        
+
                     }
                 });
     }
@@ -164,10 +164,9 @@ namespace Pest {
         return new Incoming($store);
     }
 
-    function rumor(?int $created_at = null, ?string $pubkey = '', ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP01\Rumor {
-        return new \nostriphant\NIP01\Rumor(
+    function unsigned(?int $created_at = null, ?int $kind = 0, ?string $content = '', ?array $tags = []): \nostriphant\NIP01\Event\Unsigned {
+        return new \nostriphant\NIP01\Event\Unsigned(
                 $created_at ?? time(),
-                $pubkey,
                 $kind,
                 $content,
                 $tags

@@ -4,7 +4,7 @@ namespace nostriphant\RelayTests;
 
 use nostriphant\NIP01\Message;
 use nostriphant\NIP01\Key;
-use nostriphant\NIP01\Rumor;
+use nostriphant\NIP01\Event\Unsigned;
 
 class Factory {
 
@@ -13,9 +13,8 @@ class Factory {
     }
 
     static function eventAt(Key $sender_key, int $kind, string $content, int $at, array ...$tags): Message {
-        return Message::event((new Rumor(
-                                pubkey: $sender_key(Key::public()),
-                                        created_at: $at,
+        return Message::event((new Unsigned(
+                                created_at: $at,
                                         kind: $kind,
                                         content: $content,
                                         tags: $tags

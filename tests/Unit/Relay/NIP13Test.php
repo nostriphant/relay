@@ -17,14 +17,14 @@ it('should check for expected amount of leading zeros for an event-id', function
     $signer = self::key_sender();
     $event = Event::__set_state(json_decode('{
         "id": "' . $id . '",
-        "pubkey": "' . $signer(Key::public()) . '",
+        "pubkey": "' . Key::derivePublicKey($signer) . '",
         "created_at": 1651794653,
         "kind": 1,
         "tags": [
           ["nonce", "776797", "' . ($difficulty - 1) . '"]
         ],
         "content": "It\'s just me mining my own business",
-        "sig": "' . $signer(Key::signer($id)) . '"
+        "sig": "' . Key::sign($signer, $id) . '"
       }', true));
 
     $limits = Limits::construct(eventid_min_leading_zeros: $difficulty, created_at_lower_delta: 0, created_at_upper_delta: 0);
@@ -38,14 +38,14 @@ it('should check for expected amount of leading zeros for an event-id, configure
     $signer = self::key_sender();
     $event = Event::__set_state(json_decode('{
         "id": "' . $id . '",
-        "pubkey": "' . $signer(Key::public()) . '",
+        "pubkey": "' . Key::derivePublicKey($signer) . '",
         "created_at": 1651794653,
         "kind": 1,
         "tags": [
           ["nonce", "776797", "' . ($difficulty - 1) . '"]
         ],
         "content": "It\'s just me mining my own business",
-        "sig": "' . $signer(Key::signer($id)) . '"
+        "sig": "' . Key::sign($signer, $id) . '"
       }', true));
 
     putenv('LIMIT_EVENT_CREATED_AT_LOWER_DELTA=0');
@@ -72,11 +72,11 @@ $keys = [
 it('should check for expected amount of leading zeros for a pubkey', function (string $privkey, string $pubkey, int $difficulty) {
     $signer = Key::fromHex($privkey);
 
-    $rumor = new \nostriphant\NIP59\Rumor(time(), $pubkey, 1, "It's just me mining my own business", [["nonce", "776797", "" . ($difficulty - 1)]]);
+    $rumor = new \nostriphant\NIP01\Event\Unsigned(time(), 1, "It's just me mining my own business", [["nonce", "776797", "" . ($difficulty - 1)]]);
     $event = $rumor($signer);
 
-    expect($pubkey)->toBe($signer(Key::public()));
-    //expect($event->sig)->toBe($signer(Key::signer($event->id)));
+    expect($pubkey)->toBe(Key::derivePublicKey($signer));
+    //expect($event->sig)->toBe(Key::sign($signer, $event->id)));
     expect(Event::verify($event))->toBeTrue();
 
     $limits = Limits::construct(pubkey_min_leading_zeros: $difficulty);
@@ -91,9 +91,9 @@ it('should check for expected amount of leading zeros for a pubkey', function (s
 it('should check for expected amount of leading zeros for a pubkey, configured through ENV-vars', function (string $privkey, string $pubkey, int $difficulty) {
     $signer = Key::fromHex($privkey);
 
-    expect($pubkey)->toBe($signer(Key::public()));
+    expect($pubkey)->toBe(Key::derivePublicKey($signer));
 
-    $rumor = new \nostriphant\NIP59\Rumor(1651794653, $pubkey, 1, "It's just me mining my own business", ["nonce", "776797", "" . ($difficulty - 1)]);
+    $rumor = new \nostriphant\NIP01\Event\Unsigned(1651794653, 1, "It's just me mining my own business", ["nonce", "776797", "" . ($difficulty - 1)]);
     $event = $rumor($signer);
 
     putenv('LIMIT_EVENT_PUBKEY_MIN_LEADING_ZEROS=' . $difficulty);

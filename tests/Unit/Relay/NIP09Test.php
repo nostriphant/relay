@@ -24,7 +24,7 @@ it('SHOULD delete or stop publishing any referenced events that have an identica
             ['OK']
     );
 
-    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [$sender_key(Key::public())]]), incoming($store));
+    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)]]), incoming($store));
     expect($recipient)->toHaveReceived(
             ['EVENT', $subscription_id, function (array $event) {
                     expect($event['content'])->toBe('Hello World');
@@ -40,7 +40,7 @@ it('SHOULD delete or stop publishing any referenced events that have an identica
     expect(isset($store[$delete_event()[1]['id']]))->toBeTrue();
     expect(isset($store[$message()[1]['id']]))->toBeFalse();
 
-    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [$sender_key(Key::public())]]), incoming($store));
+    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)]]), incoming($store));
     expect($recipient)->toHaveReceived(
             ['EVENT', $subscription_id, function (array $event) {
                     expect($event['content'])->toBe('sent by accident');
@@ -62,7 +62,7 @@ it('SHOULD NOT delete or stop publishing any referenced events that have an diff
             ['OK']
     );
 
-    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [$sender_key(Key::public())]]), incoming($store));
+    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)]]), incoming($store));
     expect($recipient)->toHaveReceived(
             ['EVENT', $subscription_id, function (array $event) {
                     expect($event['content'])->toBe('Hello World');
@@ -79,7 +79,7 @@ it('SHOULD NOT delete or stop publishing any referenced events that have an diff
     expect(isset($store[$delete_event()[1]['id']]))->toBeTrue();
     expect(isset($store[$message()[1]['id']]))->toBeTrue();
 
-    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [$sender_key(Key::public())]]), incoming($store));
+    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)]]), incoming($store));
     expect($recipient)->toHaveReceived(
             ['EVENT', $subscription_id, function (array $event) {
                     expect($event['content'])->toBe('Hello World');
@@ -99,7 +99,7 @@ it('When an a tag is used, relays SHOULD delete all versions of the replaceable 
             ['OK']
     );
 
-    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [$sender_key(Key::public())]]), incoming($store));
+    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)]]), incoming($store));
     expect($recipient)->toHaveReceived(
             ['EVENT', $subscription_id, function (array $event) {
                     expect($event['content'])->toBe('Hello World');
@@ -116,7 +116,7 @@ it('When an a tag is used, relays SHOULD delete all versions of the replaceable 
     expect(isset($store[$delete_event()[1]['id']]))->toBeTrue();
     expect(isset($store[$message()[1]['id']]))->toBeTrue();
 
-    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [$sender_key(Key::public())], 'kinds' => [1]]), incoming($store));
+    $recipient = \Pest\handle(Message::req($subscription_id = uniqid(), ['authors' => [Key::derivePublicKey($sender_key)], 'kinds' => [1]]), incoming($store));
     expect($recipient)->toHaveReceived(
             ['EVENT', $subscription_id, function (array $event) {
                     expect($event['content'])->toBe('Hello World');

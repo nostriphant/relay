@@ -12,15 +12,14 @@
         "amphp/websocket-server": "^4.0",
         "amphp/http-server-router": "^2.0",
         "amphp/http-server-static-content": "^2.0",
-        "nostriphant/nip-01": "^2.0",
+        "nostriphant/nip-01": "^3.0",
         "nostriphant/nip-19": "^2.0",
-        "nostriphant/nip-44": "^2.0",
-        "nostriphant/nip-59": "^2.0",
-        "nostriphant/nip-17": "^2.0",
-        "nostriphant/stores": "^2.0",
+        "nostriphant/nip-44": "^3.0",
+        "nostriphant/nip-17": "^3.0",
+        "nostriphant/stores": "^3.0",
         "nostriphant/functional": "^2.3"
     },
-    
+
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -42,7 +41,7 @@
         "ext-curl": "*",
         "pestphp/pest": "^4.0",
         "mockery/mockery": "^1.6",
-        "nostriphant/client": "^1.0",
+        "nostriphant/client": "^3.0",
         "monolog/monolog": "^3.7"
     },
     "config": {

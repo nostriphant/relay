@@ -16,7 +16,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     static function pubkey_sender(): string {
-        return self::key_sender()(Key::public());
+        return Key::derivePublicKey(self::key_sender());
     }
 
     static function key_recipient(): Key {
@@ -24,6 +24,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     static function pubkey_recipient(): string {
-        return self::key_recipient()(Key::public());
+        return Key::derivePublicKey(self::key_recipient());
     }
 }
